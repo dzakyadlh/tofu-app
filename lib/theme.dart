@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 double defaultMargin = 24.0;
-double defaultRadius = 50.0;
+double defaultRadius = 8.0;
 
-Color primaryColor = const Color(0xFFFCD240);
-Color secondaryColor = const Color(0xFFFFBD16);
-Color tertiaryColor = const Color(0xFF000000);
+Color primaryColor = const Color(0xFFB0E8C9);
+Color secondaryColor = const Color(0xFFE6FAEF);
+Color tertiaryColor = const Color(0xFF2DA161);
 Color inactiveColor = const Color(0xFFF3F3F3);
-Color primaryTextColor = const Color(0xFF000000);
+Color primaryTextColor = const Color(0xFFB0E8C9);
 Color secondaryTextColor = const Color(0xFFFFFFFF);
 Color subtitleTextColor = const Color(0xFF504F5E);
 Color priceColor = const Color(0xFFED6363);
 Color alertColor = const Color(0xFFED6363);
-Color infoColor = const Color(0xFF50CF01);
-Color backgroundPrimaryColor = const Color(0xFFFFFFFF);
-Color backgroundSecondaryColor = const Color(0xFFF5F5F5);
-Color backgroundTertiaryColor = const Color(0xFFFCD240);
+Color infoColor = const Color.fromARGB(255, 1, 142, 207);
+Color backgroundPrimaryColor = const Color(0xFF222222);
+Color backgroundSecondaryColor = const Color(0xFFE6FAEF);
+Color backgroundTertiaryColor = const Color(0xFF2DA161);
 
 TextStyle primaryTextStyle = GoogleFonts.sora(
   color: primaryTextColor,
