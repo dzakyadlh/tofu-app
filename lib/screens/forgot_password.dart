@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
-class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final emailController = TextEditingController(text: '');
   final _formKey = GlobalKey<FormState>();
 

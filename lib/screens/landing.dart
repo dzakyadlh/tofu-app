@@ -21,12 +21,12 @@ class LandingScreen extends StatelessWidget {
                 height: 300,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage('assets/images/tofu.png'),
+                      image: AssetImage('assets/images/landing_img.png'),
                       fit: BoxFit.fitWidth),
                 ),
               ),
               const SizedBox(
-                height: 32,
+                height: 64,
               ),
               Text(
                 'Reach your financial goal with us',

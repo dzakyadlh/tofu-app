@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
-class CompleteProfile extends StatefulWidget {
-  const CompleteProfile({super.key});
+class CompleteProfileScreen extends StatefulWidget {
+  const CompleteProfileScreen({super.key});
 
   @override
-  State<CompleteProfile> createState() => _CompleteProfileState();
+  State<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
 }
 
-class _CompleteProfileState extends State<CompleteProfile> {
+class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final nameController = TextEditingController(text: '');
   final birthDateController = TextEditingController(text: '');
   final occupationController = TextEditingController(text: '');
@@ -92,7 +92,7 @@ class _CompleteProfileState extends State<CompleteProfile> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/complete_profile');
+                    Navigator.pushNamed(context, '/onboarding');
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

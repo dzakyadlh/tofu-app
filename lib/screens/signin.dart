@@ -62,7 +62,7 @@ class _SigninScreenState extends State<SigninScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamed(context, '/main');
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,
