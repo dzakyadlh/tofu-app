@@ -8,14 +8,14 @@ class InfoWalletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: double.infinity,
-          height: 400,
+          width: 300,
+          height: 300,
+          margin: const EdgeInsets.only(bottom: 32),
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/landing_img.png'),
+                  image: AssetImage('assets/images/wallet.png'),
                   fit: BoxFit.fitWidth)),
         ),
         Text(
@@ -35,7 +35,7 @@ class InfoWalletScreen extends StatelessWidget {
         Text(
           'With Tofu, you’ll always know where your money is going!',
           style: secondaryTextStyle.copyWith(fontSize: 14),
-        ),
+        )
       ],
     );
   }

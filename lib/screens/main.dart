@@ -4,7 +4,6 @@ import 'package:tofu/providers/screen_provider.dart';
 import 'package:tofu/screens/main/home.dart';
 import 'package:tofu/screens/main/portfolio.dart';
 import 'package:tofu/screens/main/profile.dart';
-import 'package:tofu/screens/main/search.dart';
 import 'package:tofu/theme.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,7 +17,6 @@ class _MainScreenState extends State<MainScreen> {
   final List _screens = [
     const HomeScreen(),
     const PortfolioScreen(),
-    const SearchScreen(),
     const ProfileScreen(),
   ];
 
@@ -50,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
                           : Icons.home_outlined,
                       size: 24,
                       color: screenProvider.currentIndex == 0
-                          ? tertiaryColor
+                          ? primaryColor
                           : Colors.grey,
                     ),
                     label: ''),
@@ -61,29 +59,18 @@ class _MainScreenState extends State<MainScreen> {
                           : Icons.pie_chart_outline,
                       size: 24,
                       color: screenProvider.currentIndex == 1
-                          ? tertiaryColor
+                          ? primaryColor
                           : Colors.grey,
                     ),
                     label: ''),
                 BottomNavigationBarItem(
                     icon: Icon(
                       screenProvider.currentIndex == 2
-                          ? Icons.search
-                          : Icons.search_outlined,
-                      size: 24,
-                      color: screenProvider.currentIndex == 2
-                          ? tertiaryColor
-                          : Colors.grey,
-                    ),
-                    label: ''),
-                BottomNavigationBarItem(
-                    icon: Icon(
-                      screenProvider.currentIndex == 3
                           ? Icons.person
                           : Icons.person_outlined,
                       size: 24,
-                      color: screenProvider.currentIndex == 3
-                          ? tertiaryColor
+                      color: screenProvider.currentIndex == 2
+                          ? primaryColor
                           : Colors.grey,
                     ),
                     label: ''),
@@ -98,15 +85,16 @@ class _MainScreenState extends State<MainScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: _screens[screenProvider.currentIndex]),
-            ),
-            bottomBar(), // Bottom bar stays at the bottom
-          ],
+        child: Container(
+          color: backgroundSecondaryColor,
+          child: Column(
+            children: [
+              Expanded(
+                child: _screens[screenProvider.currentIndex],
+              ),
+              bottomBar(), // Bottom bar stays at the bottom
+            ],
+          ),
         ),
       ),
     );

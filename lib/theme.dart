@@ -15,7 +15,7 @@ Color priceColor = const Color(0xFFED6363);
 Color alertColor = const Color(0xFFED6363);
 Color infoColor = const Color.fromARGB(255, 1, 142, 207);
 Color backgroundPrimaryColor = const Color(0xFF222222);
-Color backgroundSecondaryColor = const Color(0xFFE6FAEF);
+Color backgroundSecondaryColor = const Color(0xFF7FA690);
 Color backgroundTertiaryColor = const Color(0xFF2DA161);
 
 TextStyle primaryTextStyle = GoogleFonts.sora(

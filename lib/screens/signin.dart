@@ -62,7 +62,8 @@ class _SigninScreenState extends State<SigninScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/main');
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/main', (_) => false);
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

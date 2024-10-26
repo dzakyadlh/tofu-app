@@ -8,14 +8,15 @@ class InfoInvestScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          width: double.infinity,
-          height: 400,
+          width: 300,
+          height: 300,
+          margin: const EdgeInsets.only(bottom: 16),
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/landing_img.png'),
+                  image: AssetImage('assets/images/invest.png'),
                   fit: BoxFit.fitWidth)),
         ),
         Text(

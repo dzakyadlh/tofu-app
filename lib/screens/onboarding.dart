@@ -69,6 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       if (screenProvider.currentIndex < totalScreens - 1) {
                         screenProvider.currentIndex += 1;
                       } else {
+                        screenProvider.currentIndex = 0;
                         Navigator.pushNamedAndRemoveUntil(
                             context, '/main', (_) => false);
                       }
@@ -122,18 +123,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child:
-                    contents(), // Content takes the remaining available space
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! < 0 && screenProvider.currentIndex < 3) {
+            screenProvider.currentIndex += 1;
+          }
+          if (details.primaryVelocity! > 0 &&
+              screenProvider.currentIndex != 0) {
+            screenProvider.currentIndex -= 1;
+          }
+        },
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child:
+                      contents(), // Content takes the remaining available space
+                ),
               ),
-            ),
-            bottomBar(), // Bottom bar stays at the bottom
-          ],
+              bottomBar(), // Bottom bar stays at the bottom
+            ],
+          ),
         ),
       ),
     );

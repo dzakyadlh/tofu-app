@@ -8,14 +8,14 @@ class InfoConnectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          width: double.infinity,
-          height: 400,
+          width: 300,
+          height: 300,
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/landing_img.png'),
+                  image: AssetImage('assets/images/credit.png'),
                   fit: BoxFit.fitWidth)),
         ),
         Text(
