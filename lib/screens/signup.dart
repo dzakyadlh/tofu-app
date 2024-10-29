@@ -57,7 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/complete_profile');
+                    Navigator.pushNamed(context, '/complete-profile');
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

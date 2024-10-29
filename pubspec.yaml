@@ -57,6 +57,10 @@ flutter:
     - assets/images/invest.png
     - assets/images/plan.png
     - assets/images/credit.png
+    - assets/images/song.jpg
+    - assets/images/paypal.png
+    - assets/images/visa.png
+    - assets/images/mastercard.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

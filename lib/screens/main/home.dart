@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 4,
               ),
               Text(
-                'My Cards',
+                'Top Up',
                 style: primaryTextStyle.copyWith(fontSize: 8),
               )
             ],
@@ -208,18 +208,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const FinancialPlanCard(
             title: 'Financial Freedom',
-            target: '1,000,000',
+            target: 1000000,
             timeRemaining: '10 year 3 months',
-            monthlyTarget: '5.0',
+            monthlyTarget: 5.0,
+          ),
+          const SizedBox(
+            height: 16,
           ),
           const FinancialPlanCard(
             title: 'Financial Freedom',
-            target: '1,000,000',
+            target: 1000000,
             timeRemaining: '10 year 3 months',
-            monthlyTarget: '5.0',
+            monthlyTarget: 5.0,
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/financial-plans');
+            },
             style: TextButton.styleFrom(padding: const EdgeInsets.all(0)),
             child: Text(
               'See more',
@@ -283,6 +288,16 @@ class _HomeScreenState extends State<HomeScreen> {
             category: 'business',
             isOutcome: true,
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/transactions');
+            },
+            style: TextButton.styleFrom(padding: const EdgeInsets.all(0)),
+            child: Text(
+              'See more',
+              style: primaryTextStyle.copyWith(fontSize: 12),
+            ),
+          )
         ],
       ),
     );

@@ -11,6 +11,7 @@ class CustomInputField extends StatefulWidget {
     this.isObscureText = false,
     this.fontSize = 14,
     this.obscureButton = false,
+    this.padding = const EdgeInsets.only(top: 20),
   });
 
   final String labelText;
@@ -20,6 +21,7 @@ class CustomInputField extends StatefulWidget {
   final String? Function(String?)? validator;
   final double fontSize;
   final bool obscureButton;
+  final EdgeInsetsGeometry padding;
 
   @override
   State<CustomInputField> createState() => _CustomInputFieldState();
@@ -38,17 +40,19 @@ class _CustomInputFieldState extends State<CustomInputField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
+      padding: widget.padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.labelText.toString(),
-            style: primaryTextStyle.copyWith(
-              fontWeight: medium,
-              fontSize: widget.fontSize,
-            ),
-          ),
+          (widget.labelText != ''
+              ? Text(
+                  widget.labelText.toString(),
+                  style: primaryTextStyle.copyWith(
+                    fontWeight: medium,
+                    fontSize: widget.fontSize,
+                  ),
+                )
+              : const SizedBox()),
           const SizedBox(
             height: 6,
           ),

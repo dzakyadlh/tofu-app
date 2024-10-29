@@ -41,7 +41,7 @@ class _SigninScreenState extends State<SigninScreen> {
               children: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/forgot_password');
+                      Navigator.pushNamed(context, '/forgot-password');
                     },
                     child: Text(
                       'I Forgot My Password',
