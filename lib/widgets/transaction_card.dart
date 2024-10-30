@@ -47,63 +47,68 @@ class TransactionCard extends StatelessWidget {
         break;
     }
 
-    return Container(
-      padding: const EdgeInsets.all(8),
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                margin: const EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                    color: Colors.white10,
-                    borderRadius: BorderRadius.circular(defaultRadius)),
-                child: Icon(
-                  transactionIcon,
-                  color: primaryColor,
-                  size: 24,
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, '/transaction-detail');
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        margin: const EdgeInsets.only(bottom: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(defaultRadius)),
+                  child: Icon(
+                    transactionIcon,
+                    color: primaryColor,
+                    size: 24,
+                  ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: secondaryTextStyle.copyWith(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: secondaryTextStyle.copyWith(
+                        fontSize: 14,
+                        fontWeight: semibold,
+                      ),
+                    ),
+                    Text(
+                      date,
+                      style: subtitleTextStyle.copyWith(
+                        fontSize: 12,
+                        fontWeight: light,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+            isOutcome
+                ? Text(
+                    '-\$$price',
+                    style: alertTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: semibold,
                     ),
-                  ),
-                  Text(
-                    date,
-                    style: subtitleTextStyle.copyWith(
-                      fontSize: 12,
-                      fontWeight: light,
+                  )
+                : Text(
+                    '+\$$price',
+                    style: primaryTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: semibold,
                     ),
                   )
-                ],
-              ),
-            ],
-          ),
-          isOutcome
-              ? Text(
-                  '-\$$price',
-                  style: alertTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semibold,
-                  ),
-                )
-              : Text(
-                  '+\$$price',
-                  style: primaryTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semibold,
-                  ),
-                )
-        ],
+          ],
+        ),
       ),
     );
   }

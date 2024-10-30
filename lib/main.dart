@@ -12,6 +12,7 @@ import 'package:tofu/screens/onboarding.dart';
 import 'package:tofu/screens/signin.dart';
 import 'package:tofu/screens/signup.dart';
 import 'package:tofu/screens/splash.dart';
+import 'package:tofu/screens/transaction_detail.dart';
 import 'package:tofu/screens/transactions.dart';
 
 void main() {
@@ -42,8 +43,9 @@ class MyApp extends StatelessWidget {
           '/financial-plans': (context) => const FinancialPlansScreen(),
           '/financial-plan-detail': (context) =>
               const FinancialPlanDetailScreen(),
-          '/transactions': (context) => const TransactionsScreen(),
           '/add-financial-plan': (context) => const AddFinancialPlanScreen(),
+          '/transactions': (context) => const TransactionsScreen(),
+          '/transaction-detail': (context) => const TransactionDetailScreen(),
         },
       ),
     );
