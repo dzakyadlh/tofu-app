@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
@@ -19,6 +21,32 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of(context);
+
+    handleSignUp() async {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        await authProvider.signUp(
+            emailController.text, passwordController.text);
+        if (authProvider.isAuthenticated) {
+          isLoading = false;
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/complete-profile', (_) => false);
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          'Sign Up Failed: $e',
+          style: alertTextStyle.copyWith(
+            fontWeight: semibold,
+            fontSize: 14,
+          ),
+        )));
+      }
+    }
+
     Widget inputFields() {
       return Form(
         key: _formKey,
@@ -57,7 +85,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/complete-profile');
+                    handleSignUp();
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

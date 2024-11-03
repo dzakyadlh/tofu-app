@@ -1,6 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tofu/firebase_options.dart';
+import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/providers/screen_provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/screens/add_financial_plan.dart';
 import 'package:tofu/screens/complete_profile.dart';
 import 'package:tofu/screens/financial_plan_detail.dart';
@@ -15,7 +20,11 @@ import 'package:tofu/screens/splash.dart';
 import 'package:tofu/screens/transaction_detail.dart';
 import 'package:tofu/screens/transactions.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -26,7 +35,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ScreenProvider())
+        ChangeNotifierProvider(create: (context) => ScreenProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => FinancialPlanProvider()),
       ],
       child: MaterialApp(
         title: 'Travelme',

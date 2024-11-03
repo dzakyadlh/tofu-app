@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/theme.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of(context);
+
+    handleSignOut() async {
+      setState(() {
+        isLoading = true;
+      });
+      await authProvider.signOut();
+      if (!authProvider.isAuthenticated) {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pushNamedAndRemoveUntil(context, ('/landing'), (_) => false);
+      }
+    }
+
     Widget header() {
       return Padding(
         padding: const EdgeInsets.all(16),
@@ -340,14 +364,13 @@ class ProfileScreen extends StatelessWidget {
       );
     }
 
-    Widget logoutButton() {
+    Widget signOutButton() {
       return Row(
         children: [
           Expanded(
             child: FilledButton(
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/landing', (_) => false);
+                  handleSignOut();
                 },
                 style: FilledButton.styleFrom(
                     side: BorderSide(color: alertColor),
@@ -355,7 +378,7 @@ class ProfileScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8))),
                 child: Text(
-                  'Logout of my account',
+                  'Sign out of my account',
                   style: alertTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: semibold,
@@ -383,7 +406,7 @@ class ProfileScreen extends StatelessWidget {
               personalData(),
               balance(),
               settings(),
-              logoutButton(),
+              signOutButton(),
             ]),
           )
         ],

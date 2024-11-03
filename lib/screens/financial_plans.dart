@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/financial_plan_card.dart';
 
@@ -10,26 +13,57 @@ class FinancialPlansScreen extends StatefulWidget {
 }
 
 class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
-  final List<Map<String, dynamic>> financialPlans = [
-    {
-      'title': 'Financial Freedom',
-      'target': 1000000,
-      'timeRemaining': '10 year 3 months',
-      'monthlyTarget': 5.0
-    },
-    {
-      'title': 'Financial Freedom',
-      'target': 1000000,
-      'timeRemaining': '10 year 3 months',
-      'monthlyTarget': 5.0
-    },
-    {
-      'title': 'Financial Freedom',
-      'target': 1000000,
-      'timeRemaining': '10 year 3 months',
-      'monthlyTarget': 5.0
-    },
-  ];
+  // final List<Map<String, dynamic>> financialPlans = [
+  //   {
+  //     'title': 'Financial Freedom',
+  //     'target': 1000000,
+  //     'timeRemaining': '10 year 3 months',
+  //     'monthlyTarget': 5.0
+  //   },
+  //   {
+  //     'title': 'Financial Freedom',
+  //     'target': 1000000,
+  //     'timeRemaining': '10 year 3 months',
+  //     'monthlyTarget': 5.0
+  //   },
+  //   {
+  //     'title': 'Financial Freedom',
+  //     'target': 1000000,
+  //     'timeRemaining': '10 year 3 months',
+  //     'monthlyTarget': 5.0
+  //   },
+  // ];
+
+  bool isLoading = true;
+  List<Map<String, dynamic>> financialPlans = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFinancialPlans();
+  }
+
+  Future<void> _fetchFinancialPlans() async {
+    try {
+      AuthProvider authProvider = Provider.of(context, listen: false);
+      FinancialPlanProvider financialPlanProvider =
+          Provider.of(context, listen: false);
+      await financialPlanProvider.fetchFinancialPlans(authProvider.user!.uid);
+
+      setState(() {
+        financialPlans = financialPlanProvider.financialPlans;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Failed to load financial plans: ${e.toString()}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

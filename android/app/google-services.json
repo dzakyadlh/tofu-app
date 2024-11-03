@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39921959963",
+    "project_id": "tofu-f1re41",
+    "storage_bucket": "tofu-f1re41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39921959963:android:150c0d57cec07d8931a4be",
+        "android_client_info": {
+          "package_name": "com.dzakyadlh.tofu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcRGszGwTppBOpiEF_dqRsOMIe0cmRkYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
