@@ -16,14 +16,9 @@ class LandingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: double.infinity,
-                height: 300,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/landing_img.png'),
-                      fit: BoxFit.fitWidth),
-                ),
+              Image.asset(
+                'assets/images/landing_img.png',
+                fit: BoxFit.fitWidth,
               ),
               const SizedBox(
                 height: 64,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/financial_plan_card.dart';
+import 'package:tofu/widgets/loading_screen.dart';
 import 'package:tofu/widgets/monthly_cashflow.dart';
 import 'package:tofu/widgets/transaction_card.dart';
 
@@ -12,6 +16,34 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isLoading = true;
+  List<Map<String, dynamic>> financialPlans = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFinancialPlans();
+  }
+
+  Future<void> _fetchFinancialPlans() async {
+    try {
+      AuthProvider authProvider = Provider.of(context, listen: false);
+      FinancialPlanProvider financialPlanProvider =
+          Provider.of(context, listen: false);
+      await financialPlanProvider.fetchFinancialPlans(authProvider.user!.uid);
+
+      setState(() {
+        financialPlans = financialPlanProvider.financialPlans;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print(e.toString());
+    }
+  }
+
   Widget topBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -189,7 +221,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget financialPlans() {
+  Widget emptyFinancialPlanList() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'You don\'t have any financial plans',
+            style: secondaryTextStyle.copyWith(
+              fontWeight: semibold,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            'Create a new financial plan to help you manage and grow your wealth with us',
+            style: subtitleTextStyle.copyWith(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget financialPlansList() {
     return Container(
       width: double.infinity,
       color: backgroundPrimaryColor,
@@ -206,21 +263,42 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 16,
           ),
-          const FinancialPlanCard(
-            title: 'Financial Freedom',
-            target: 1000000,
-            timeRemaining: '10 year 3 months',
-            monthlyTarget: 5.0,
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          const FinancialPlanCard(
-            title: 'Financial Freedom',
-            target: 1000000,
-            timeRemaining: '10 year 3 months',
-            monthlyTarget: 5.0,
-          ),
+          if (financialPlans.isNotEmpty) ...[
+            // Generate cards for the first two financial plans
+            if (financialPlans.isNotEmpty)
+              FinancialPlanCard(
+                title: financialPlans[0]['title'],
+                target: financialPlans[0]['target'],
+                timeRemaining: financialPlans[0]['timeRemaining'],
+                monthlyTarget: financialPlans[0]['monthlyTarget'],
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/financial-plan-detail',
+                    arguments: financialPlans[0],
+                  );
+                },
+              ),
+            const SizedBox(
+              height: 8,
+            ),
+            if (financialPlans.length > 1)
+              FinancialPlanCard(
+                title: financialPlans[1]['title'],
+                target: financialPlans[1]['target'],
+                timeRemaining: financialPlans[1]['timeRemaining'],
+                monthlyTarget: financialPlans[1]['monthlyTarget'],
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/financial-plan-detail',
+                    arguments: financialPlans[1],
+                  );
+                },
+              ),
+          ] else ...[
+            emptyFinancialPlanList(), // Call the empty list widget if there are no plans
+          ],
           TextButton(
             onPressed: () {
               Navigator.pushNamed(context, '/financial-plans');
@@ -305,42 +383,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            color: backgroundPrimaryColor,
+    return isLoading
+        ? const LoadingScreen()
+        : SingleChildScrollView(
             child: Column(
               children: [
-                topBar(),
-                const SizedBox(
-                  height: 16,
+                Container(
+                  color: backgroundPrimaryColor,
+                  child: Column(
+                    children: [
+                      topBar(),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      miniPortolio(),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                    ],
+                  ),
                 ),
-                miniPortolio(),
-                const SizedBox(
-                  height: 32,
-                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      featuresMenu(),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      financialPlansList(),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      transactions(),
+                    ],
+                  ),
+                )
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                featuresMenu(),
-                const SizedBox(
-                  height: 16,
-                ),
-                financialPlans(),
-                const SizedBox(
-                  height: 16,
-                ),
-                transactions(),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+          );
   }
 }

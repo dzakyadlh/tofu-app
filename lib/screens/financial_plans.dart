@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/financial_plan_card.dart';
 
 class FinancialPlansScreen extends StatefulWidget {
@@ -13,27 +14,6 @@ class FinancialPlansScreen extends StatefulWidget {
 }
 
 class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
-  // final List<Map<String, dynamic>> financialPlans = [
-  //   {
-  //     'title': 'Financial Freedom',
-  //     'target': 1000000,
-  //     'timeRemaining': '10 year 3 months',
-  //     'monthlyTarget': 5.0
-  //   },
-  //   {
-  //     'title': 'Financial Freedom',
-  //     'target': 1000000,
-  //     'timeRemaining': '10 year 3 months',
-  //     'monthlyTarget': 5.0
-  //   },
-  //   {
-  //     'title': 'Financial Freedom',
-  //     'target': 1000000,
-  //     'timeRemaining': '10 year 3 months',
-  //     'monthlyTarget': 5.0
-  //   },
-  // ];
-
   bool isLoading = true;
   List<Map<String, dynamic>> financialPlans = [];
 
@@ -52,16 +32,14 @@ class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
 
       setState(() {
         financialPlans = financialPlanProvider.financialPlans;
+        print(financialPlans);
         isLoading = false;
       });
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to load financial plans: ${e.toString()}')),
-      );
+      print(e.toString());
     }
   }
 
@@ -103,6 +81,39 @@ class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
       );
     }
 
+    Widget emptyList() {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You don\'t have any financial plans',
+              style: secondaryTextStyle.copyWith(
+                fontWeight: semibold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              'Create a new financial plan to help you manage and grow your wealth with us',
+              style: subtitleTextStyle.copyWith(fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            CustomFilledButton(
+                buttonText: 'Create a new plan',
+                onPressed: () {
+                  Navigator.pushNamed(context, '/add-financial-plan');
+                })
+          ],
+        ),
+      );
+    }
+
     Widget financialPlansList() {
       return ListView.builder(
         itemCount: financialPlans.length,
@@ -110,10 +121,18 @@ class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             child: FinancialPlanCard(
-                title: financialPlans[index]['title'],
-                target: financialPlans[index]['target'],
-                timeRemaining: financialPlans[index]['timeRemaining'],
-                monthlyTarget: financialPlans[index]['monthlyTarget']),
+              title: financialPlans[index]['title'],
+              target: financialPlans[index]['target'],
+              timeRemaining: financialPlans[index]['timeRemaining'],
+              monthlyTarget: financialPlans[index]['monthlyTarget'],
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  '/financial-plan-detail',
+                  arguments: financialPlans[index],
+                );
+              },
+            ),
           );
         },
       );
@@ -126,7 +145,17 @@ class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(children: [Expanded(child: financialPlansList())]),
+        child: Column(children: [
+          Expanded(
+            child: isLoading
+                ? const Center(
+                    child:
+                        CircularProgressIndicator()) // Show loading indicator while fetching
+                : (financialPlans.isNotEmpty
+                    ? financialPlansList()
+                    : emptyList()),
+          ),
+        ]),
       )),
     );
   }

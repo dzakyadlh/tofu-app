@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/number_format.dart';
 
 class FinancialPlanDetailScreen extends StatefulWidget {
   const FinancialPlanDetailScreen({super.key});
@@ -13,6 +15,8 @@ class FinancialPlanDetailScreen extends StatefulWidget {
 
 class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
   double _progressValue = 0.0;
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -34,6 +38,9 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final financialPlan =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     PreferredSizeWidget topBar() {
       return PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -82,7 +89,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                 //   ),
                 // ),
                 Text(
-                  '125,000/1,000,000',
+                  '125,000/${formatWithComma(financialPlan['target'])}',
                   style: subtitleTextStyle.copyWith(fontSize: 12),
                 )
               ],
@@ -133,7 +140,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   ),
                 ),
                 Text(
-                  '\$1,000,000',
+                  '\$${formatWithComma(financialPlan['target'])}',
                   style: primaryTextStyle.copyWith(
                     fontSize: 12,
                   ),
@@ -222,7 +229,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   ),
                 ),
                 Text(
-                  '31 December 2034',
+                  DateFormat('dd MMM yyyy').format(financialPlan['deadline']),
                   style: primaryTextStyle.copyWith(
                     fontSize: 12,
                   ),
@@ -242,7 +249,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   ),
                 ),
                 Text(
-                  '10 year 3 Months',
+                  '${financialPlan['timeRemaining']}',
                   style: primaryTextStyle.copyWith(
                     fontSize: 12,
                   ),
@@ -323,7 +330,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   ),
                 ),
                 Text(
-                  '+5.0%',
+                  '\$${financialPlan['monthlyTarget']}',
                   style: primaryTextStyle.copyWith(
                     fontSize: 12,
                   ),

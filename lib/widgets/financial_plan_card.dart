@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/number_format.dart';
 
 class FinancialPlanCard extends StatefulWidget {
   const FinancialPlanCard({
@@ -8,12 +9,14 @@ class FinancialPlanCard extends StatefulWidget {
     required this.target,
     required this.timeRemaining,
     required this.monthlyTarget,
+    required this.onPressed,
   });
 
   final String title;
   final int target;
   final String timeRemaining;
-  final double monthlyTarget;
+  final int monthlyTarget;
+  final void Function()? onPressed;
 
   @override
   State<FinancialPlanCard> createState() => _FinancialPlanCardState();
@@ -28,9 +31,7 @@ class _FinancialPlanCardState extends State<FinancialPlanCard> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, '/financial-plan-detail');
-        },
+        onTap: widget.onPressed,
         splashColor: primaryColor,
         child: Container(
           width: 300,
@@ -59,7 +60,7 @@ class _FinancialPlanCardState extends State<FinancialPlanCard> {
                     style: subtitleTextStyle.copyWith(fontSize: 12),
                   ),
                   Text(
-                    '\$${widget.target}',
+                    '\$${formatWithComma(widget.target)}',
                     style: primaryTextStyle.copyWith(fontSize: 12),
                   ),
                 ],
@@ -91,7 +92,7 @@ class _FinancialPlanCardState extends State<FinancialPlanCard> {
                     style: subtitleTextStyle.copyWith(fontSize: 12),
                   ),
                   Text(
-                    '+${widget.monthlyTarget}%',
+                    '\$${formatWithComma(widget.monthlyTarget)}',
                     style: primaryTextStyle.copyWith(fontSize: 12),
                   ),
                 ],

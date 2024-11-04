@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/loading_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,7 +13,26 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLoading = false;
+  bool isLoading = true;
+
+  Future<void> fetchUserData() async {
+    UserProvider userProvider = Provider.of(context, listen: false);
+
+    try {
+      await userProvider.fetchUserData();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: semibold,
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () {},
                   child: const Icon(
                     Icons.edit,
@@ -198,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'Connected accounts',
                   style: subtitleTextStyle.copyWith(fontSize: 14),
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () {},
                   child: const Icon(
                     Icons.add,
@@ -389,28 +410,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            color: backgroundPrimaryColor,
+    return isLoading
+        ? const LoadingScreen()
+        : SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [header()],
+              children: [
+                Container(
+                  width: double.infinity,
+                  color: backgroundPrimaryColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [header()],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      personalData(),
+                      balance(),
+                      settings(),
+                      signOutButton(),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(children: [
-              personalData(),
-              balance(),
-              settings(),
-              signOutButton(),
-            ]),
-          )
-        ],
-      ),
-    );
+          );
   }
 }

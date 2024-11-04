@@ -7,7 +7,7 @@ class InfoPlannerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
@@ -21,21 +21,21 @@ class InfoPlannerScreen extends StatelessWidget {
         ),
         Text(
           'Financial Planning',
-          style: primaryTextStyle.copyWith(fontWeight: semibold, fontSize: 20),
+          style: primaryTextStyle.copyWith(fontWeight: semibold, fontSize: 24),
         ),
         const SizedBox(
           height: 16,
         ),
         Text(
           'Set financial goals, create budgets, and plan for your future.',
-          style: secondaryTextStyle.copyWith(fontSize: 14),
+          style: secondaryTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
           height: 16,
         ),
         Text(
           'Tofu helps you stick to your plans and make progress towards achieving your financial dreams!',
-          style: secondaryTextStyle.copyWith(fontSize: 14),
+          style: secondaryTextStyle.copyWith(fontSize: 16),
         ),
       ],
     );

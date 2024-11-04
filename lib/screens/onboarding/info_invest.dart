@@ -7,7 +7,7 @@ class InfoInvestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
@@ -21,21 +21,21 @@ class InfoInvestScreen extends StatelessWidget {
         ),
         Text(
           'Investment Insights',
-          style: primaryTextStyle.copyWith(fontWeight: semibold, fontSize: 20),
+          style: primaryTextStyle.copyWith(fontWeight: semibold, fontSize: 24),
         ),
         const SizedBox(
           height: 16,
         ),
         Text(
           'Make smarter investment decisions. Tofu helps you track your portfolio, analyze growth, and manage risks',
-          style: secondaryTextStyle.copyWith(fontSize: 14),
+          style: secondaryTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
           height: 16,
         ),
         Text(
           'With Tofu, you can plan your financial future with confidence!',
-          style: secondaryTextStyle.copyWith(fontSize: 14),
+          style: secondaryTextStyle.copyWith(fontSize: 16),
         ),
       ],
     );

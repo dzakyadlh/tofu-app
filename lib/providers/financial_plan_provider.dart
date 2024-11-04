@@ -23,16 +23,17 @@ class FinancialPlanProvider with ChangeNotifier {
       _financialPlans = snapshot.docs.map((doc) {
         // Fetch the required fields from Firestore
         String title = doc['title'];
-        double target = doc['target'];
+        int target = doc['target'];
         DateTime deadline = (doc['deadline'] as Timestamp).toDate();
 
         DateTime now = DateTime.now();
 
+        Duration timeRemaining = deadline.difference(now);
         int yearsRemaining = deadline.year - now.year;
-        int monthsRemaining = deadline.month - now.month;
-        int daysRemaining = deadline.day - now.day;
+        int monthsRemaining = timeRemaining.inDays ~/ 30 % 12;
+        int daysRemaining = timeRemaining.inDays % 30;
 
-        double monthlyTarget = target / monthsRemaining;
+        int monthlyTarget = target ~/ (timeRemaining.inDays ~/ 30);
 
         return {
           'title': title,
@@ -51,7 +52,7 @@ class FinancialPlanProvider with ChangeNotifier {
   }
 
   Future<void> addFinancialPlan(
-      String uid, String title, double target, DateTime deadline) async {
+      String uid, String title, int target, DateTime deadline) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) {
       throw Exception('Not authenticated');
@@ -64,6 +65,8 @@ class FinancialPlanProvider with ChangeNotifier {
         'deadline': deadline,
         'userId': user.uid,
       });
+      fetchFinancialPlans(uid);
+      notifyListeners();
     } catch (e) {
       print(e.toString());
       rethrow;
@@ -71,7 +74,7 @@ class FinancialPlanProvider with ChangeNotifier {
   }
 
   Future<void> removeFinancialPlan(
-      String uid, String title, double target, DateTime deadline) async {
+      String uid, String title, int target, DateTime deadline) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) {
       throw Exception('Not authenticated');
@@ -79,6 +82,7 @@ class FinancialPlanProvider with ChangeNotifier {
 
     try {
       await _firestore.collection('financial_plans').doc(user.uid).delete();
+      notifyListeners();
     } catch (e) {
       print(e.toString());
       rethrow;

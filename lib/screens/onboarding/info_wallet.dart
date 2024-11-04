@@ -7,7 +7,7 @@ class InfoWalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
           width: 300,
@@ -20,21 +20,21 @@ class InfoWalletScreen extends StatelessWidget {
         ),
         Text(
           'Create a Wallet',
-          style: primaryTextStyle.copyWith(fontWeight: semibold, fontSize: 20),
+          style: primaryTextStyle.copyWith(fontWeight: semibold, fontSize: 24),
         ),
         const SizedBox(
           height: 16,
         ),
         Text(
           'Track all your financial transactions in one place. Add your income and expenses, and monitor your cash flow effortlessly.',
-          style: secondaryTextStyle.copyWith(fontSize: 14),
+          style: secondaryTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
           height: 16,
         ),
         Text(
           'With Tofu, you’ll always know where your money is going!',
-          style: secondaryTextStyle.copyWith(fontSize: 14),
+          style: secondaryTextStyle.copyWith(fontSize: 16),
         )
       ],
     );

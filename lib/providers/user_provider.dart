@@ -17,8 +17,8 @@ class UserProvider with ChangeNotifier {
     return userDoc.data() as Map<String, dynamic>;
   }
 
-  Future<void> updateUserData(String name, String birthDate, String occupation,
-      String phoneNumber) async {
+  Future<void> updateUserData(String name, DateTime birthDate,
+      String occupation, String phoneNumber) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) {
       throw Exception('Not authenticated');

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,8 +18,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _checkLoginStatus() async {
+    AuthProvider authProvider = Provider.of(context, listen: false);
     await Future.delayed(const Duration(milliseconds: 3000));
-    Navigator.pushNamedAndRemoveUntil(context, '/landing', (_) => false);
+    authProvider.isAuthenticated
+        ? Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false)
+        : Navigator.pushNamedAndRemoveUntil(context, '/landing', (_) => false);
   }
 
   @override

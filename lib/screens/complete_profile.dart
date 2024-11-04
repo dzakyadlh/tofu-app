@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
@@ -11,7 +13,7 @@ class CompleteProfileScreen extends StatefulWidget {
 
 class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final nameController = TextEditingController(text: '');
-  final birthDateController = TextEditingController(text: '');
+  DateTime? selectedDeadline;
   final occupationController = TextEditingController(text: '');
   final phoneNumberController = TextEditingController(text: '');
 
@@ -19,8 +21,55 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   bool isLoading = false;
 
+  Future<void> completeProfile() async {
+    UserProvider userProvider = Provider.of(context, listen: false);
+
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await userProvider.updateUserData(
+        nameController.text,
+        selectedDeadline!,
+        occupationController.text,
+        phoneNumberController.text,
+      );
+      Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (_) => false);
+    } catch (e) {
+      print(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to complete profile: ${e.toString()}')),
+      );
+    } finally {
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDeadline ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDeadline) {
+      setState(() {
+        selectedDeadline = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    handleCompleteProfile() {
+      completeProfile();
+    }
+
     Widget header() {
       return Text(
         'Help us to know more about you!',
@@ -64,10 +113,35 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               hintText: 'Mizuki Akai',
               controller: nameController,
             ),
-            CustomInputField(
-              labelText: 'When is Your Birth Date? *',
-              hintText: '29/02/2000',
-              controller: birthDateController,
+            const SizedBox(
+              height: 16,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'When is your birth date?',
+                  style: primaryTextStyle.copyWith(fontSize: 14),
+                ),
+                GestureDetector(
+                  onTap: () => _selectDate(context), // Trigger the date picker
+                  child: AbsorbPointer(
+                    // Prevent keyboard from popping up
+                    child: CustomInputField(
+                      labelText: '',
+                      hintText: selectedDeadline != null
+                          ? "${selectedDeadline!.day}-${selectedDeadline!.month}-${selectedDeadline!.year}"
+                          : '01-01-2000',
+                      controller: TextEditingController(
+                        text: selectedDeadline != null
+                            ? "${selectedDeadline!.day}-${selectedDeadline!.month}-${selectedDeadline!.year}"
+                            : '',
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ],
             ),
             CustomInputField(
               labelText: 'What is Your Occupation? *',
@@ -92,7 +166,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/onboarding');
+                    handleCompleteProfile();
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

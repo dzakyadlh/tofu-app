@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/custom_editing_controller.dart';
 import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
@@ -12,13 +16,69 @@ class AddFinancialPlanScreen extends StatefulWidget {
 
 class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
   final titleController = TextEditingController(text: '');
-  final targetController = TextEditingController(text: '');
-  final deadlineController = TextEditingController(text: '');
+  final targetController = IntegerTextEditingController();
+  DateTime? selectedDeadline;
 
   final _formKey = GlobalKey<FormState>();
 
+  bool isLoading = true;
+
+  Future<void> addFinancialPlan() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
+      AuthProvider authProvider =
+          Provider.of<AuthProvider>(context, listen: false);
+      FinancialPlanProvider financialPlanProvider =
+          Provider.of<FinancialPlanProvider>(context, listen: false);
+
+      try {
+        await financialPlanProvider.addFinancialPlan(
+          authProvider.user!.uid,
+          titleController.text,
+          targetController.integerValue!,
+          selectedDeadline!,
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        print(e.toString());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to load financial plans: ${e.toString()}')),
+        );
+      } finally {
+        if (mounted) {
+          // Check if the widget is still mounted
+          setState(() {
+            isLoading = false;
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDeadline ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDeadline) {
+      setState(() {
+        selectedDeadline = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    handleSubmit() {
+      addFinancialPlan();
+    }
+
     PreferredSizeWidget topBar() {
       return PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -93,8 +153,8 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
             ),
             CustomInputField(
               labelText: '',
-              hintText: 'New House',
-              controller: titleController,
+              hintText: '1,000,000',
+              controller: targetController,
               padding: EdgeInsets.zero,
             ),
             const SizedBox(
@@ -116,11 +176,31 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
             const SizedBox(
               height: 8,
             ),
-            CustomInputField(
-              labelText: '',
-              hintText: 'New House',
-              controller: titleController,
-              padding: EdgeInsets.zero,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 6,
+                ),
+                GestureDetector(
+                  onTap: () => _selectDate(context), // Trigger the date picker
+                  child: AbsorbPointer(
+                    // Prevent keyboard from popping up
+                    child: CustomInputField(
+                      labelText: '',
+                      hintText: selectedDeadline != null
+                          ? "${selectedDeadline!.day}-${selectedDeadline!.month}-${selectedDeadline!.year}"
+                          : 'Select a date',
+                      controller: TextEditingController(
+                        text: selectedDeadline != null
+                            ? "${selectedDeadline!.day}-${selectedDeadline!.month}-${selectedDeadline!.year}"
+                            : '',
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -143,11 +223,7 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
             CustomFilledButton(
               buttonText: 'Submit Plan',
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/main',
-                  (_) => false,
-                );
+                handleSubmit();
               },
             )
           ],
