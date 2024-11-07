@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/utils/custom_editing_controller.dart';
@@ -28,15 +27,11 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
       setState(() {
         isLoading = true;
       });
-
-      AuthProvider authProvider =
-          Provider.of<AuthProvider>(context, listen: false);
       FinancialPlanProvider financialPlanProvider =
           Provider.of<FinancialPlanProvider>(context, listen: false);
 
       try {
         await financialPlanProvider.addFinancialPlan(
-          authProvider.user!.uid,
           titleController.text,
           targetController.integerValue!,
           selectedDeadline!,

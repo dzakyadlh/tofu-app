@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
-import 'package:tofu/widgets/loading_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,40 +13,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLoading = true;
-
-  Future<void> fetchUserData() async {
-    UserProvider userProvider = Provider.of(context, listen: false);
-
-    try {
-      await userProvider.fetchUserData();
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchUserData();
-  }
-
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of(context);
 
     handleSignOut() async {
-      setState(() {
-        isLoading = true;
-      });
       await authProvider.signOut();
       if (!authProvider.isAuthenticated) {
-        setState(() {
-          isLoading = false;
-        });
         Navigator.pushNamedAndRemoveUntil(context, ('/landing'), (_) => false);
       }
     }
@@ -57,23 +30,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 60,
-              height: 60,
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                image: const DecorationImage(
-                    image: AssetImage('assets/images/song.jpg'),
-                    fit: BoxFit.cover),
-                borderRadius: BorderRadius.circular(50),
-              ),
-            ),
-            Text(
-              'Hello, Mizuki Akai',
-              style: primaryTextStyle.copyWith(
-                fontSize: 20,
-                fontWeight: semibold,
-              ),
+            Consumer<UserProvider>(
+              builder: (context, provider, child) {
+                return Skeletonizer(
+                  enabled: provider.isLoading ? true : false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          image: const DecorationImage(
+                              image: AssetImage('assets/images/song.jpg'),
+                              fit: BoxFit.cover),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      Text(
+                        'Hello, ${provider.user['name']}',
+                        style: primaryTextStyle.copyWith(
+                          fontSize: 20,
+                          fontWeight: semibold,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(
               height: 4,
@@ -117,66 +102,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 16,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Full Name',
-                  style: secondaryTextStyle.copyWith(fontSize: 14),
-                ),
-                Text(
-                  'Mizuki Akai',
-                  style: subtitleTextStyle.copyWith(fontSize: 14),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Date of Birth',
-                  style: secondaryTextStyle.copyWith(fontSize: 14),
-                ),
-                Text(
-                  '1 January 2000',
-                  style: subtitleTextStyle.copyWith(fontSize: 14),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Occupation',
-                  style: secondaryTextStyle.copyWith(fontSize: 14),
-                ),
-                Text(
-                  'Software Engineer',
-                  style: subtitleTextStyle.copyWith(fontSize: 14),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Phone Number',
-                  style: secondaryTextStyle.copyWith(fontSize: 14),
-                ),
-                Text(
-                  '+6281234567890',
-                  style: subtitleTextStyle.copyWith(fontSize: 14),
-                )
-              ],
+            Consumer<UserProvider>(
+              builder: (context, provider, child) {
+                return Skeletonizer(
+                  enabled: provider.isLoading ? true : false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Full Name',
+                            style: secondaryTextStyle.copyWith(fontSize: 14),
+                          ),
+                          Text(
+                            '${provider.user['name']}',
+                            style: subtitleTextStyle.copyWith(fontSize: 14),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Date of Birth',
+                            style: secondaryTextStyle.copyWith(fontSize: 14),
+                          ),
+                          Text(
+                            '${provider.user['birthDate']}',
+                            style: subtitleTextStyle.copyWith(fontSize: 14),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Occupation',
+                            style: secondaryTextStyle.copyWith(fontSize: 14),
+                          ),
+                          Text(
+                            '${provider.user['occupation']}',
+                            style: subtitleTextStyle.copyWith(fontSize: 14),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Phone Number',
+                            style: secondaryTextStyle.copyWith(fontSize: 14),
+                          ),
+                          Text(
+                            '${provider.user['phoneNumber']}',
+                            style: subtitleTextStyle.copyWith(fontSize: 14),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(
               height: 8,
@@ -410,32 +407,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
-    return isLoading
-        ? const LoadingScreen()
-        : SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            color: backgroundPrimaryColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [header()],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  color: backgroundPrimaryColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [header()],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      personalData(),
-                      balance(),
-                      settings(),
-                      signOutButton(),
-                    ],
-                  ),
-                ),
+                personalData(),
+                balance(),
+                settings(),
+                signOutButton(),
               ],
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 }

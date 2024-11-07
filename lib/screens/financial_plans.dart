@@ -1,47 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/financial_plan_card.dart';
+import 'package:tofu/widgets/loading_screen.dart';
 
-class FinancialPlansScreen extends StatefulWidget {
+class FinancialPlansScreen extends StatelessWidget {
   const FinancialPlansScreen({super.key});
-
-  @override
-  State<FinancialPlansScreen> createState() => _FinancialPlansScreenState();
-}
-
-class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
-  bool isLoading = true;
-  List<Map<String, dynamic>> financialPlans = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchFinancialPlans();
-  }
-
-  Future<void> _fetchFinancialPlans() async {
-    try {
-      AuthProvider authProvider = Provider.of(context, listen: false);
-      FinancialPlanProvider financialPlanProvider =
-          Provider.of(context, listen: false);
-      await financialPlanProvider.fetchFinancialPlans(authProvider.user!.uid);
-
-      setState(() {
-        financialPlans = financialPlanProvider.financialPlans;
-        print(financialPlans);
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      print(e.toString());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +80,7 @@ class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
       );
     }
 
-    Widget financialPlansList() {
+    Widget financialPlansList(List<Map<String, dynamic>> financialPlans) {
       return ListView.builder(
         itemCount: financialPlans.length,
         itemBuilder: (context, index) {
@@ -144,19 +110,16 @@ class _FinancialPlansScreenState extends State<FinancialPlansScreen> {
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(children: [
-          Expanded(
-            child: isLoading
-                ? const Center(
-                    child:
-                        CircularProgressIndicator()) // Show loading indicator while fetching
-                : (financialPlans.isNotEmpty
-                    ? financialPlansList()
-                    : emptyList()),
-          ),
-        ]),
-      )),
+              padding: const EdgeInsets.all(16.0),
+              child: Consumer<FinancialPlanProvider>(
+                  builder: (context, provider, child) {
+                if (provider.isLoading) {
+                  return const LoadingScreen();
+                }
+                return provider.financialPlans.isNotEmpty
+                    ? financialPlansList(provider.financialPlans)
+                    : emptyList();
+              }))),
     );
   }
 }

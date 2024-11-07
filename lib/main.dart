@@ -5,6 +5,7 @@ import 'package:tofu/firebase_options.dart';
 import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/providers/screen_provider.dart';
+import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/screens/add_financial_plan.dart';
 import 'package:tofu/screens/complete_profile.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => FinancialPlanProvider()),
+        ChangeNotifierProvider(create: (context) => TransactionProvider()),
       ],
       child: MaterialApp(
         title: 'Travelme',
