@@ -71,7 +71,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       } else {
                         screenProvider.currentIndex = 0;
                         Navigator.pushNamedAndRemoveUntil(
-                            context, '/main', (_) => false);
+                            context, '/create-pin', (_) => false);
                       }
                     },
                     style: FilledButton.styleFrom(

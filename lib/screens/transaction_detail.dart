@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
-import 'package:tofu/widgets/custom_filled_button.dart';
+import 'package:tofu/widgets/custom_outlined_button.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   const TransactionDetailScreen({super.key});
@@ -219,7 +219,7 @@ class TransactionDetailScreen extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.only(top: 32),
         child:
-            CustomFilledButton(buttonText: 'Share Receipt', onPressed: () {}),
+            CustomOutlinedButton(buttonText: 'Share Receipt', onPressed: () {}),
       );
     }
 

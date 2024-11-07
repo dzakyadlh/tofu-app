@@ -104,7 +104,9 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           FilledButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/transfer-fund');
+            },
             style: FilledButton.styleFrom(
               backgroundColor: backgroundPrimaryColor,
               side: BorderSide(color: tertiaryColor),
@@ -160,7 +162,9 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           FilledButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/top-up');
+            },
             style: FilledButton.styleFrom(
               backgroundColor: backgroundPrimaryColor,
               side: BorderSide(color: tertiaryColor),
@@ -193,19 +197,29 @@ class HomeScreen extends StatelessWidget {
 
     Widget skeletonList() {
       return Skeletonizer(
-        enabled: true,
+        enabled: false,
         effect: const ShimmerEffect(),
         child: Container(
           width: double.infinity,
           color: backgroundPrimaryColor,
           padding: const EdgeInsets.all(8),
-          child: const Column(
+          child: Column(
             children: [
               SkeletonFinancialPlanCard(),
               SizedBox(
                 height: 8,
               ),
               SkeletonFinancialPlanCard(),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/transactions');
+                },
+                style: TextButton.styleFrom(padding: const EdgeInsets.all(0)),
+                child: Text(
+                  'See more',
+                  style: primaryTextStyle.copyWith(fontSize: 12),
+                ),
+              )
             ],
           ),
         ),
@@ -390,7 +404,7 @@ class HomeScreen extends StatelessWidget {
                   isOutcome: transactions[3]['isOutcome'],
                 ),
             ] else ...[
-              emptyFinancialPlanList(), // Call the empty list widget if there are no plans
+              emptyTransactionList(), // Call the empty list widget if there are no plans
             ],
             TextButton(
               onPressed: () {

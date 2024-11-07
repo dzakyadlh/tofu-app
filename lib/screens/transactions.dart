@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/transaction_card.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -10,69 +13,12 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  final List<Map<String, dynamic>> transactions = [
-    {
-      'title': 'Electricity Bill',
-      'date': '27 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-    {
-      'title': 'Salary',
-      'date': '25 October 2024, 3:15 pm',
-      'price': 10000.00,
-      'category': 'salary',
-      'isOutcome': false,
-    },
-    {
-      'title': 'Electricity Bill',
-      'date': '20 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-    {
-      'title': 'Electricity Bill',
-      'date': '20 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-    {
-      'title': 'Electricity Bill',
-      'date': '20 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-    {
-      'title': 'Electricity Bill',
-      'date': '20 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-    {
-      'title': 'Electricity Bill',
-      'date': '20 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-    {
-      'title': 'Electricity Bill',
-      'date': '20 October 2024, 3:15 pm',
-      'price': 250.00,
-      'category': 'electricity',
-      'isOutcome': true,
-    },
-  ];
-
   int selectedYear = 0;
 
   @override
   Widget build(BuildContext context) {
+    TransactionProvider transactionProvider = Provider.of(context);
+
     PreferredSizeWidget topBar() {
       return PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -106,10 +52,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           scrollDirection: Axis.horizontal,
           itemCount: 10,
           itemBuilder: (context, index) {
+            int year = currentYear - index;
             return GestureDetector(
               onTap: () {
                 setState(() {
-                  selectedYear = index;
+                  selectedYear = year;
+                  transactionProvider.fetchTransactions(selectedYear);
                 });
               },
               child: Container(
@@ -118,8 +66,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   vertical: 4,
                 ),
                 child: Text(
-                  '${currentYear - index}',
-                  style: (index == selectedYear
+                  '$year',
+                  style: (year == selectedYear
                           ? primaryTextStyle
                           : secondaryTextStyle)
                       .copyWith(
@@ -134,7 +82,43 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       );
     }
 
-    Widget transactionList() {
+    Widget emptyList() {
+      return Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'You haven\'t done any transaction',
+              style: secondaryTextStyle.copyWith(
+                fontWeight: semibold,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              'Invest most of your money and transfer your money when you need to',
+              style: subtitleTextStyle.copyWith(fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            CustomFilledButton(
+                buttonText: 'Transfer Fund',
+                onPressed: () {
+                  Navigator.pushNamed(context, '/add-financial-plan');
+                }),
+            const SizedBox(
+              height: 8,
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget transactionList(List<Map<String, dynamic>> transactions) {
       return ListView.builder(
           itemCount: transactions.length,
           itemBuilder: (context, index) {
@@ -164,7 +148,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             const SizedBox(
               height: 16,
             ),
-            Expanded(child: transactionList()),
+            Consumer<TransactionProvider>(builder: (context, provider, child) {
+              return provider.transactions.isNotEmpty
+                  ? transactionList(provider.transactions)
+                  : emptyList();
+            })
           ],
         ),
       )),

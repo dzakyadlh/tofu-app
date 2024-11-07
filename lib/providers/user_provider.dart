@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UserProvider with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -32,7 +33,8 @@ class UserProvider with ChangeNotifier {
         _user = {
           'email': doc['email'],
           'name': doc['name'],
-          'birthDate': (doc['birthDate'] as Timestamp).toDate(),
+          'birthDate':
+              '${(doc['birthDate'] as Timestamp).toDate().day}-${(doc['birthDate'] as Timestamp).toDate().month}-${(doc['birthDate'] as Timestamp).toDate().year}',
           'occupation': doc['occupation'],
           'phoneNumber': doc['phoneNumber'],
         };

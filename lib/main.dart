@@ -9,17 +9,24 @@ import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/screens/add_financial_plan.dart';
 import 'package:tofu/screens/complete_profile.dart';
+import 'package:tofu/screens/create_pin.dart';
+import 'package:tofu/screens/create_wallet.dart';
 import 'package:tofu/screens/financial_plan_detail.dart';
 import 'package:tofu/screens/financial_plans.dart';
 import 'package:tofu/screens/forgot_password.dart';
+import 'package:tofu/screens/fund_transfer.dart';
 import 'package:tofu/screens/landing.dart';
 import 'package:tofu/screens/main.dart';
 import 'package:tofu/screens/onboarding.dart';
+import 'package:tofu/screens/pin_verification.dart';
 import 'package:tofu/screens/signin.dart';
 import 'package:tofu/screens/signup.dart';
 import 'package:tofu/screens/splash.dart';
+import 'package:tofu/screens/top_up.dart';
 import 'package:tofu/screens/transaction_detail.dart';
+import 'package:tofu/screens/transaction_success.dart';
 import 'package:tofu/screens/transactions.dart';
+import 'package:tofu/screens/transfer_checkout.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +60,8 @@ class MyApp extends StatelessWidget {
           '/forgot-password': (context) => const ForgotPasswordScreen(),
           '/complete-profile': (context) => const CompleteProfileScreen(),
           '/onboarding': (context) => const OnboardingScreen(),
+          '/create-pin': (context) => const CreatePinScreen(),
+          '/create-wallet': (context) => const CreateWalletScreen(),
           '/main': (context) => const MainScreen(),
           '/financial-plans': (context) => const FinancialPlansScreen(),
           '/financial-plan-detail': (context) =>
@@ -60,6 +69,11 @@ class MyApp extends StatelessWidget {
           '/add-financial-plan': (context) => const AddFinancialPlanScreen(),
           '/transactions': (context) => const TransactionsScreen(),
           '/transaction-detail': (context) => const TransactionDetailScreen(),
+          '/transfer-fund': (context) => const FundTransferScreen(),
+          '/transfer-checkout': (context) => const TransferCheckoutScreen(),
+          '/pin-verification': (context) => const PinVerificationScreen(),
+          '/transaction-success': (context) => const TransactionSuccessScreen(),
+          '/top-up': (context) => const TopUpScreen(),
         },
       ),
     );

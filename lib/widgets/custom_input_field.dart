@@ -12,6 +12,7 @@ class CustomInputField extends StatefulWidget {
     this.fontSize = 14,
     this.obscureButton = false,
     this.padding = const EdgeInsets.only(top: 20),
+    this.keyboardType = TextInputType.text,
   });
 
   final String labelText;
@@ -22,6 +23,7 @@ class CustomInputField extends StatefulWidget {
   final double fontSize;
   final bool obscureButton;
   final EdgeInsetsGeometry padding;
+  final TextInputType keyboardType;
 
   @override
   State<CustomInputField> createState() => _CustomInputFieldState();
@@ -94,6 +96,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
                   : null,
             ),
             validator: widget.validator,
+            keyboardType: widget.keyboardType,
           )
         ],
       ),
