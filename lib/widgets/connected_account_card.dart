@@ -5,6 +5,7 @@ import 'package:tofu/utils/number_format.dart';
 class ConnectedAccountCard extends StatelessWidget {
   final String name;
   final int balance;
+  final String icon;
   final int radioValue;
   final int radioGroupValue;
   final ValueChanged<int?> onChanged;
@@ -13,6 +14,7 @@ class ConnectedAccountCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.balance,
+    required this.icon,
     required this.radioValue,
     required this.radioGroupValue,
     required this.onChanged,
@@ -26,7 +28,7 @@ class ConnectedAccountCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         child: ListTile(
           leading: Image.asset(
-            'assets/images/visa.png', // Ensure the path is correct in your project.
+            icon, // Ensure the path is correct in your project.
             width: 50,
             fit: BoxFit.fitWidth,
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 
@@ -201,11 +202,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 16,
             ),
-            Text(
-              '\$125,000',
-              style:
-                  secondaryTextStyle.copyWith(fontSize: 20, fontWeight: bold),
-            ),
+            Consumer<UserProvider>(builder: (context, provider, child) {
+              return Skeletonizer(
+                  enabled: provider.isLoading,
+                  child: Text(
+                    '${provider.user['wallet']?['balance'] ?? 0}',
+                    style: secondaryTextStyle.copyWith(
+                        fontSize: 20, fontWeight: bold),
+                  ));
+            }),
             const SizedBox(
               height: 8,
             ),
@@ -217,7 +222,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: subtitleTextStyle.copyWith(fontSize: 14),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/add-connected-account');
+                  },
                   child: const Icon(
                     Icons.add,
                     color: Colors.white24,
@@ -229,46 +236,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 8,
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.white12))),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/visa.png',
-                    width: 40,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    'Visa',
-                    style: secondaryTextStyle.copyWith(fontSize: 12),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.white12))),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/paypal.png',
-                    width: 40,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    'Paypal',
-                    style: secondaryTextStyle.copyWith(fontSize: 12),
-                  )
-                ],
-              ),
-            ),
+            Consumer<ConnectedAccountsProvider>(
+                builder: (context, provider, child) {
+              if (provider.connectedAccounts.isEmpty) {
+                return Text(
+                  'No connected accounts',
+                  style: secondaryTextStyle.copyWith(fontSize: 14),
+                );
+              }
+
+              return Column(
+                children: provider.connectedAccounts.map((account) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: const BoxDecoration(
+                      border: Border(top: BorderSide(color: Colors.white12)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Image.asset(
+                              account['icon'],
+                              width: 40,
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              account['name'],
+                              style: secondaryTextStyle.copyWith(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          account['accountNumber'],
+                          style: subtitleTextStyle.copyWith(fontSize: 14),
+                        )
+                      ],
+                    ),
+                  );
+                }).toList(), // Convert the Iterable to a List of Widgets
+              );
+            })
           ],
         ),
       );

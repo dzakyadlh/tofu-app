@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_filled_button.dart';
 
@@ -32,6 +34,35 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of(context);
+
+    handleVerifyPin() async {
+      try {
+        bool isPinCorrect = await userProvider.verifyPin(pinController.text);
+        if (isPinCorrect) {
+          // PIN is correct, navigate to success page
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/transaction-success', (_) => false);
+        } else {
+          // Show an error if the PIN is incorrect
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Incorrect PIN. Please try again.'),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+        }
+      } catch (e) {
+        // Handle any errors (e.g., connection issues)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error verifying PIN: ${e.toString()}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+
     final focusedBorderColor = tertiaryColor;
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
@@ -107,7 +138,9 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                 defaultPinTheme: defaultPinTheme,
                 separatorBuilder: (index) => const SizedBox(width: 8),
                 validator: (value) {
-                  return value == '222222' ? null : 'Pin is incorrect';
+                  return value?.length == 6
+                      ? null
+                      : 'Pin needs to be 6 numbers long';
                 },
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
@@ -157,6 +190,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
           onPressed: () {
             focusNode.unfocus();
             if (formKey.currentState!.validate()) {
+              handleVerifyPin();
               Navigator.pushNamedAndRemoveUntil(
                   context, '/transaction-success', (_) => false);
             }

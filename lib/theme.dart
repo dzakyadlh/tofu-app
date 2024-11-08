@@ -13,6 +13,7 @@ Color secondaryTextColor = const Color(0xFFFFFFFF);
 Color subtitleTextColor = const Color(0xFF9E9E9E);
 Color priceColor = const Color(0xFFED6363);
 Color alertColor = const Color(0xFFED6363);
+Color errorColor = const Color(0xFFB71C1C);
 Color infoColor = const Color.fromARGB(255, 1, 142, 207);
 Color backgroundPrimaryColor = const Color(0xFF222222);
 Color backgroundSecondaryColor = const Color(0xFF7FA690);
@@ -44,6 +45,10 @@ TextStyle alertTextStyle = GoogleFonts.sora(
 
 TextStyle infoTextStyle = GoogleFonts.sora(
   color: infoColor,
+);
+
+TextStyle errorTextStyle = GoogleFonts.sora(
+  color: errorColor,
 );
 
 FontWeight light = FontWeight.w300;

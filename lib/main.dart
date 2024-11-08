@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/firebase_options.dart';
 import 'package:tofu/providers/auth_provider.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/providers/screen_provider.dart';
 import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
+import 'package:tofu/screens/add_connected_accounts.dart';
 import 'package:tofu/screens/add_financial_plan.dart';
 import 'package:tofu/screens/complete_profile.dart';
 import 'package:tofu/screens/create_pin.dart';
-import 'package:tofu/screens/create_wallet.dart';
 import 'package:tofu/screens/financial_plan_detail.dart';
 import 'package:tofu/screens/financial_plans.dart';
 import 'package:tofu/screens/forgot_password.dart';
@@ -48,6 +49,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => FinancialPlanProvider()),
         ChangeNotifierProvider(create: (context) => TransactionProvider()),
+        ChangeNotifierProvider(
+            create: (context) => ConnectedAccountsProvider()),
       ],
       child: MaterialApp(
         title: 'Travelme',
@@ -61,7 +64,6 @@ class MyApp extends StatelessWidget {
           '/complete-profile': (context) => const CompleteProfileScreen(),
           '/onboarding': (context) => const OnboardingScreen(),
           '/create-pin': (context) => const CreatePinScreen(),
-          '/create-wallet': (context) => const CreateWalletScreen(),
           '/main': (context) => const MainScreen(),
           '/financial-plans': (context) => const FinancialPlansScreen(),
           '/financial-plan-detail': (context) =>
@@ -74,6 +76,7 @@ class MyApp extends StatelessWidget {
           '/pin-verification': (context) => const PinVerificationScreen(),
           '/transaction-success': (context) => const TransactionSuccessScreen(),
           '/top-up': (context) => const TopUpScreen(),
+          '/add-connected-account': (context) => AddConnectedAccountsScreen(),
         },
       ),
     );

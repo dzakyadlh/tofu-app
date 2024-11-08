@@ -29,7 +29,10 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cloud_firestore: ^5.4.4
+  crypto: ^3.0.6
   cupertino_icons: ^1.0.6
+  dropdown_button2: ^2.3.9
+  encrypt: ^5.0.3
   firebase_auth: ^5.3.1
   firebase_core: ^3.6.0
   fl_chart: ^0.69.0
@@ -66,7 +69,9 @@ flutter:
     - assets/images/song.jpg
     - assets/images/paypal.png
     - assets/images/visa.png
-    - assets/images/mastercard.png
+    - assets/images/bca.png
+    - assets/images/mandiri.png
+    - assets/images/amazon.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

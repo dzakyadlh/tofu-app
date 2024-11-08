@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/utils/custom_editing_controller.dart';
 import 'package:tofu/widgets/connected_account_card.dart';
@@ -14,10 +16,27 @@ class TopUpScreen extends StatefulWidget {
 
 class _TopUpScreenState extends State<TopUpScreen> {
   int selectedMethod = 0;
+  Map<String, dynamic> selectedMethodData = {};
   final amountController = IntegerTextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    handleTopUp() {
+      int selectedMethodBalance = selectedMethodData['balance'];
+      int updatedBalance =
+          selectedMethodBalance - amountController.integerValue!;
+      Navigator.pushNamed(
+        context,
+        '/pin-verification',
+        arguments: {
+          'isTopUp': true,
+          'balance': selectedMethodBalance,
+          'updatedBalance': updatedBalance,
+        },
+      );
+    }
+
     PreferredSizeWidget topBar() {
       return PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -51,33 +70,41 @@ class _TopUpScreenState extends State<TopUpScreen> {
             'Select a method',
             style: subtitleTextStyle.copyWith(fontSize: 14),
           ),
-          ConnectedAccountCard(
-            name: 'VISA',
-            balance: 1000,
-            radioValue: 0,
-            radioGroupValue: selectedMethod,
-            onChanged: (int? newValue) {
-              setState(() {
-                selectedMethod = newValue ?? 0;
-              });
-            },
-          ),
-          ConnectedAccountCard(
-            name: 'VISA',
-            balance: 1000,
-            radioValue: 1,
-            radioGroupValue: selectedMethod,
-            onChanged: (int? newValue) {
-              setState(() {
-                selectedMethod = newValue ?? 1;
-              });
-            },
-          ),
+          Consumer<ConnectedAccountsProvider>(
+              builder: (context, provider, child) {
+            if (provider.connectedAccounts.isEmpty) {
+              return Text(
+                'No connected accounts',
+                style: secondaryTextStyle.copyWith(fontSize: 14),
+              );
+            }
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: provider.connectedAccounts.length,
+              itemBuilder: (context, index) {
+                final account = provider.connectedAccounts[index];
+                return ConnectedAccountCard(
+                  name: account['name'],
+                  balance: account['balance'],
+                  icon: account['icon'],
+                  radioValue: index,
+                  radioGroupValue: selectedMethod,
+                  onChanged: (int? newValue) {
+                    setState(() {
+                      selectedMethod = newValue ?? 0;
+                    });
+                  },
+                );
+              },
+            );
+          }),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/add-connected-account');
+                  },
                   child: Text(
                     'Add another method',
                     style: infoTextStyle.copyWith(fontSize: 12),
@@ -89,13 +116,22 @@ class _TopUpScreenState extends State<TopUpScreen> {
     }
 
     Widget amountInput() {
-      return Padding(
-        padding: EdgeInsets.only(bottom: 32),
-        child: CustomInputField(
-          labelText: 'Insert an amount',
-          hintText: '0',
-          controller: amountController,
-          keyboardType: TextInputType.number,
+      return Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 32),
+          child: CustomInputField(
+            labelText: 'Insert an amount',
+            hintText: '0',
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value!.isEmpty || amountController.integerValue! < 5) {
+                return 'Transfer amount cannot be less than \$5';
+              }
+              return null;
+            },
+          ),
         ),
       );
     }
@@ -104,7 +140,9 @@ class _TopUpScreenState extends State<TopUpScreen> {
       return CustomFilledButton(
           buttonText: 'Top Up',
           onPressed: () {
-            Navigator.pushNamed(context, '/pin-verification');
+            if (_formKey.currentState!.validate()) {
+              handleTopUp();
+            }
           });
     }
 
@@ -112,7 +150,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SafeArea(
+      body: SingleChildScrollView(
           child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

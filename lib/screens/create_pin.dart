@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
-import 'package:tofu/widgets/custom_filled_button.dart';
 
 class CreatePinScreen extends StatefulWidget {
   const CreatePinScreen({super.key});
@@ -34,6 +35,24 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of(context);
+
+    handleCreatePin() async {
+      print('create wallet');
+      try {
+        await userProvider.createWallet(pinController.text);
+        Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
+      } catch (e) {
+        // Handle any errors (e.g., connection issues)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error verifying PIN: ${e.toString()}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+
     final focusedBorderColor = tertiaryColor;
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
@@ -118,10 +137,13 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                         submitNumber = 1;
                         pinController.clear();
                       } else {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/create-wallet', (_) => false);
+                        handleCreatePin();
                       }
                     });
+                  } else {
+                    submitNumber = 0;
+                    savedPin = '';
+                    pinController.clear();
                   }
                 },
                 cursor: Column(
@@ -159,23 +181,6 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
       );
     }
 
-    Widget submitButton() {
-      return CustomFilledButton(
-          buttonText: 'Continue',
-          onPressed: () {
-            focusNode.unfocus();
-            if (formKey.currentState!.validate()) {
-              setState(() {
-                submitNumber += 1;
-              });
-              if (submitNumber > 1) {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/create-wallet', (_) => false);
-              }
-            }
-          });
-    }
-
     return Scaffold(
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
@@ -188,7 +193,6 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
           children: [
             header(),
             pinInputField(),
-            submitButton(),
           ],
         ),
       )),
