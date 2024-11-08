@@ -21,18 +21,22 @@ class _TopUpScreenState extends State<TopUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void dispose() {
+    amountController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     handleTopUp() {
-      int selectedMethodBalance = selectedMethodData['balance'];
-      int updatedBalance =
-          selectedMethodBalance - amountController.integerValue!;
+      int transactionAmount = amountController.integerValue!;
       Navigator.pushNamed(
         context,
         '/pin-verification',
         arguments: {
-          'isTopUp': true,
-          'balance': selectedMethodBalance,
-          'updatedBalance': updatedBalance,
+          'transactionType': 'Top Up',
+          'transactionAmount': transactionAmount,
+          'connectedAccount': selectedMethodData,
         },
       );
     }
@@ -83,6 +87,9 @@ class _TopUpScreenState extends State<TopUpScreen> {
               itemCount: provider.connectedAccounts.length,
               itemBuilder: (context, index) {
                 final account = provider.connectedAccounts[index];
+                if (index == 0) {
+                  selectedMethodData = account;
+                }
                 return ConnectedAccountCard(
                   name: account['name'],
                   balance: account['balance'],
@@ -92,6 +99,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                   onChanged: (int? newValue) {
                     setState(() {
                       selectedMethod = newValue ?? 0;
+                      selectedMethodData = account;
                     });
                   },
                 );

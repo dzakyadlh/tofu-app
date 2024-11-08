@@ -95,6 +95,7 @@ class UserProvider with ChangeNotifier {
     try {
       await _firestore.collection('users').doc(user.uid).set({
         'wallet': {
+          'accountNumber': '${user.phoneNumber}',
           'balance': 0,
           'pin': encryptedPin,
         },

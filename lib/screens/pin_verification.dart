@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
+import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
-import 'package:tofu/widgets/custom_filled_button.dart';
 
 class PinVerificationScreen extends StatefulWidget {
   const PinVerificationScreen({super.key});
@@ -32,32 +33,61 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
     super.dispose();
   }
 
+  bool isError = false;
+
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of(context);
+    ConnectedAccountsProvider connectedAccountsProvider = Provider.of(context);
+    TransactionProvider transactionProvider = Provider.of(context);
+
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final int? transactionAmount = args['transactionAmount'];
+    final String? transactionType = args['transactionType'];
 
     handleVerifyPin() async {
       try {
         bool isPinCorrect = await userProvider.verifyPin(pinController.text);
         if (isPinCorrect) {
-          // PIN is correct, navigate to success page
-          Navigator.pushNamedAndRemoveUntil(
-              context, '/transaction-success', (_) => false);
+          if (transactionType == 'Top Up') {
+            Map<String, dynamic>? connectedAccount = args['connectedAccount'];
+            await userProvider.updateWalletBalance(transactionAmount!);
+            await connectedAccountsProvider.updateConnectedAccountBalance(
+              connectedAccount?['accountNumber'],
+              -transactionAmount,
+            );
+            await transactionProvider.addTransaction(
+              transactionType!,
+              DateTime.now(),
+              transactionAmount,
+              transactionType,
+              'Completed',
+              connectedAccount?['name'],
+              {
+                'type': 'Tofu Wallet',
+                'accountNumber': userProvider.user['phoneNumber'],
+              },
+              false,
+            );
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/transaction-success',
+              (_) => false,
+            );
+          }
         } else {
-          // Show an error if the PIN is incorrect
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Incorrect PIN. Please try again.'),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
+          setState(() {
+            pinController.clear();
+            isError = true;
+          });
         }
       } catch (e) {
         // Handle any errors (e.g., connection issues)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error verifying PIN: ${e.toString()}'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: errorColor,
           ),
         );
       }
@@ -73,7 +103,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
       textStyle: primaryTextStyle.copyWith(fontSize: 22),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: isError ? errorColor : borderColor),
       ),
     );
 
@@ -117,7 +147,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
           ),
           Text(
             'Help us identify you to secure your payment',
-            style: secondaryTextStyle.copyWith(fontSize: 14),
+            style: subtitleTextStyle.copyWith(fontSize: 14),
           ),
         ],
       );
@@ -143,12 +173,6 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                       : 'Pin needs to be 6 numbers long';
                 },
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
-                onCompleted: (pin) {
-                  debugPrint('onCompleted: $pin');
-                },
-                onChanged: (value) {
-                  debugPrint('onChanged: $value');
-                },
                 cursor: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -160,6 +184,11 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                     ),
                   ],
                 ),
+                onCompleted: (pin) {
+                  if (formKey.currentState!.validate()) {
+                    handleVerifyPin();
+                  }
+                },
                 focusedPinTheme: defaultPinTheme.copyWith(
                   decoration: defaultPinTheme.decoration!.copyWith(
                     borderRadius: BorderRadius.circular(8),
@@ -174,9 +203,9 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
                   ),
                 ),
                 errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
+                  border: Border.all(color: errorColor),
                 ),
-                errorTextStyle: alertTextStyle.copyWith(fontSize: 14),
+                errorTextStyle: errorTextStyle.copyWith(fontSize: 14),
               ),
             ),
           ]),
@@ -184,35 +213,26 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
       );
     }
 
-    Widget submitButton() {
-      return CustomFilledButton(
-          buttonText: 'Continue',
-          onPressed: () {
-            focusNode.unfocus();
-            if (formKey.currentState!.validate()) {
-              handleVerifyPin();
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/transaction-success', (_) => false);
-            }
-          });
-    }
-
     return Scaffold(
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SafeArea(
-          child: Padding(
+      body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             header(),
             pinInputField(),
-            submitButton(),
+            isError
+                ? Text(
+                    'Incorrect PIN number. Please try again',
+                    style: errorTextStyle.copyWith(fontSize: 12),
+                  )
+                : SizedBox()
           ],
         ),
-      )),
+      ),
     );
   }
 }

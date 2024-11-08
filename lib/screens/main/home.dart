@@ -366,9 +366,8 @@ class HomeScreen extends StatelessWidget {
               if (transactions.isNotEmpty)
                 TransactionCard(
                   title: transactions[0]['title'],
-                  date: DateFormat(
-                          'yyyy.MMM.dd hh:mm aaa', transactions[0]['date'])
-                      .toString(),
+                  date:
+                      '${DateFormat('yyyy.MMM.dd hh:mm aaa', transactions[0]['date'])}',
                   price: transactions[0]['price'],
                   category: transactions[0]['category'],
                   isOutcome: transactions[0]['isOutcome'],

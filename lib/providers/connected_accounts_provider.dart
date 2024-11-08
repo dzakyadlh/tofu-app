@@ -61,4 +61,35 @@ class ConnectedAccountsProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> updateConnectedAccountBalance(
+    String accountNumber,
+    int amount,
+  ) async {
+    final uid = _firebaseAuth.currentUser?.uid;
+    if (uid == null) return;
+
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('connected_accounts')
+          .where('accountNumber', isEqualTo: accountNumber)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        DocumentReference docRef = snapshot.docs.first.reference;
+
+        await docRef.update({
+          'balance': FieldValue.increment(amount),
+        });
+
+        fetchConnectedAccounts();
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error updating connected account balance: ${e.toString()}");
+      rethrow;
+    }
+  }
 }

@@ -38,7 +38,6 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     UserProvider userProvider = Provider.of(context);
 
     handleCreatePin() async {
-      print('create wallet');
       try {
         await userProvider.createWallet(pinController.text);
         Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
@@ -171,9 +170,9 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
                   ),
                 ),
                 errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
+                  border: Border.all(color: errorColor),
                 ),
-                errorTextStyle: alertTextStyle.copyWith(fontSize: 14),
+                errorTextStyle: errorTextStyle.copyWith(fontSize: 14),
               ),
             ),
           ]),

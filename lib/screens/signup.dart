@@ -20,6 +20,14 @@ class _SignupScreenState extends State<SignupScreen> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of(context);
 
@@ -57,6 +65,12 @@ class _SignupScreenState extends State<SignupScreen> {
               hintText: 'johndoe@gmail.com',
               controller: emailController,
               isObscureText: false,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Email address cannot be empty';
+                }
+                return null;
+              },
             ),
             CustomInputField(
               labelText: 'Password',
@@ -64,6 +78,12 @@ class _SignupScreenState extends State<SignupScreen> {
               controller: passwordController,
               isObscureText: true,
               obscureButton: true,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Password cannot be empty';
+                }
+                return null;
+              },
             ),
             CustomInputField(
               labelText: 'Confirm Password',
@@ -71,6 +91,12 @@ class _SignupScreenState extends State<SignupScreen> {
               controller: confirmPasswordController,
               isObscureText: true,
               obscureButton: true,
+              validator: (value) {
+                if (value!.isEmpty || value != passwordController.text) {
+                  return 'Password confirmation is not the same as the password';
+                }
+                return null;
+              },
             ),
           ],
         ),
@@ -85,7 +111,9 @@ class _SignupScreenState extends State<SignupScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    handleSignUp();
+                    if (_formKey.currentState!.validate()) {
+                      handleSignUp();
+                    }
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

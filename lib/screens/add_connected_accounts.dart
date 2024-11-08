@@ -46,6 +46,12 @@ class _AddConnectedAccountsScreenState
   bool isError = false;
 
   @override
+  void dispose() {
+    accountNumberController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     ConnectedAccountsProvider connectedAccountsProvider = Provider.of(context);
 

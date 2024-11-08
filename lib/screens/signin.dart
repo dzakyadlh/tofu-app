@@ -19,6 +19,13 @@ class _SigninScreenState extends State<SigninScreen> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of(context);
 
@@ -57,6 +64,12 @@ class _SigninScreenState extends State<SigninScreen> {
               hintText: 'johndoe@gmail.com',
               controller: emailController,
               isObscureText: false,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Email address cannot be empty';
+                }
+                return null;
+              },
             ),
             CustomInputField(
               labelText: 'Password',
@@ -64,6 +77,12 @@ class _SigninScreenState extends State<SigninScreen> {
               controller: passwordController,
               isObscureText: true,
               obscureButton: true,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Password cannot be empty';
+                }
+                return null;
+              },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -91,7 +110,9 @@ class _SigninScreenState extends State<SigninScreen> {
               Expanded(
                 child: FilledButton(
                   onPressed: () {
-                    handleSignIn();
+                    if (_formKey.currentState!.validate()) {
+                      handleSignIn();
+                    }
                   },
                   style: FilledButton.styleFrom(
                       backgroundColor: tertiaryColor,

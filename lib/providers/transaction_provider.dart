@@ -43,14 +43,14 @@ class TransactionProvider with ChangeNotifier {
         _transactions = snapshot.docs.map((doc) {
           String title = doc['title'];
           DateTime date = (doc['date'] as Timestamp).toDate();
-          int price = doc['price'];
+          int amount = doc['amount'];
           String category = doc['category'];
           bool isOutcome = doc['isOutcome'];
 
           return {
             'title': title,
             'date': date,
-            'price': price,
+            'amount': amount,
             'category': category,
             'isOutcome': isOutcome
           };
@@ -156,8 +156,11 @@ class TransactionProvider with ChangeNotifier {
   Future<void> addTransaction(
     String title,
     DateTime date,
-    int price,
+    int amount,
     String category,
+    String status,
+    String method,
+    Map<String, dynamic> receiver,
     bool isOutcome,
   ) async {
     final uid = _firebaseAuth.currentUser?.uid;
@@ -171,10 +174,12 @@ class TransactionProvider with ChangeNotifier {
           .add({
         'title': title,
         'date': date,
-        'price': price,
+        'amount': amount,
         'category': category,
+        'status': status,
+        'method': method,
+        'receiver': receiver,
         'isOutcome': isOutcome,
-        'userId': uid,
       });
       notifyListeners();
     } catch (e) {
