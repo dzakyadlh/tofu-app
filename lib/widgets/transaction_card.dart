@@ -6,14 +6,14 @@ class TransactionCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.date,
-    required this.price,
+    required this.amount,
     required this.category,
     required this.isOutcome,
   });
 
   final String title;
   final String date;
-  final double price;
+  final int amount;
   final String category;
   final bool isOutcome;
 
@@ -21,6 +21,9 @@ class TransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     IconData transactionIcon;
     switch (category) {
+      case 'Top Up':
+        transactionIcon = Icons.credit_card;
+        break;
       case 'electricity':
         transactionIcon = Icons.lightbulb;
         break;
@@ -94,14 +97,14 @@ class TransactionCard extends StatelessWidget {
             ),
             isOutcome
                 ? Text(
-                    '-\$$price',
+                    '-\$$amount',
                     style: alertTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: semibold,
                     ),
                   )
                 : Text(
-                    '+\$$price',
+                    '+\$$amount',
                     style: primaryTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: semibold,

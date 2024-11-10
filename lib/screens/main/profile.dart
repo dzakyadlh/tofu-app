@@ -240,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 builder: (context, provider, child) {
               if (provider.connectedAccounts.isEmpty) {
                 return Text(
-                  'No connected accounts',
+                  'You don\'t have any connected accounts',
                   style: secondaryTextStyle.copyWith(fontSize: 14),
                 );
               }

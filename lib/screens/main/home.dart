@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/providers/transaction_provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/financial_plan_card.dart';
 import 'package:tofu/widgets/monthly_cashflow.dart';
@@ -40,52 +42,69 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Your Balance',
-                      style: secondaryTextStyle.copyWith(fontSize: 12),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
+            Consumer<UserProvider>(
+              builder: (context, userProvider, child) {
+                return Consumer<ConnectedAccountsProvider>(
+                    builder: (context, connectedAccountProvider, child) {
+                  return Skeletonizer(
+                    enabled: userProvider.isLoading ||
+                            connectedAccountProvider.isLoading
+                        ? true
+                        : false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          '\$',
-                          style: secondaryTextStyle.copyWith(fontSize: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Your Balance',
+                              style: secondaryTextStyle.copyWith(fontSize: 12),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  '\$',
+                                  style:
+                                      secondaryTextStyle.copyWith(fontSize: 16),
+                                ),
+                                userProvider.isLoading ||
+                                        connectedAccountProvider.isLoading
+                                    ? Text('123456789')
+                                    : Text(
+                                        '${userProvider.user['wallet']['balance'] + connectedAccountProvider.totalBalance}',
+                                        style: secondaryTextStyle.copyWith(
+                                            fontWeight: semibold, fontSize: 20),
+                                      )
+                              ],
+                            ),
+                          ],
                         ),
-                        Text(
-                          '125,050',
-                          style: secondaryTextStyle.copyWith(
-                              fontWeight: semibold, fontSize: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'Last month yield',
+                              style: subtitleTextStyle.copyWith(fontSize: 12),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              '+5.58%',
+                              style: primaryTextStyle.copyWith(fontSize: 12),
+                            )
+                          ],
                         )
                       ],
                     ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Last month yield',
-                      style: subtitleTextStyle.copyWith(fontSize: 12),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      '+5.58%',
-                      style: primaryTextStyle.copyWith(fontSize: 12),
-                    )
-                  ],
-                )
-              ],
+                  );
+                });
+              },
             ),
             const SizedBox(
               height: 16,
@@ -366,39 +385,36 @@ class HomeScreen extends StatelessWidget {
               if (transactions.isNotEmpty)
                 TransactionCard(
                   title: transactions[0]['title'],
-                  date:
-                      '${DateFormat('yyyy.MMM.dd hh:mm aaa', transactions[0]['date'])}',
-                  price: transactions[0]['price'],
+                  date: DateFormat('d MMM yyyy h:mm a')
+                      .format(transactions[0]['date']),
+                  amount: transactions[0]['amount'],
                   category: transactions[0]['category'],
                   isOutcome: transactions[0]['isOutcome'],
                 ),
               if (transactions.length > 1)
                 TransactionCard(
                   title: transactions[1]['title'],
-                  date: DateFormat(
-                          'yyyy.MMM.dd hh:mm aaa', transactions[1]['date'])
-                      .toString(),
-                  price: transactions[1]['price'],
+                  date: DateFormat('d MMM yyyy h:mm a')
+                      .format(transactions[1]['date']),
+                  amount: transactions[1]['amount'],
                   category: transactions[1]['category'],
                   isOutcome: transactions[1]['isOutcome'],
                 ),
               if (transactions.length > 2)
                 TransactionCard(
                   title: transactions[2]['title'],
-                  date: DateFormat(
-                          'yyyy.MMM.dd hh:mm aaa', transactions[2]['date'])
-                      .toString(),
-                  price: transactions[2]['price'],
+                  date: DateFormat('d MMM yyyy h:mm a')
+                      .format(transactions[2]['date']),
+                  amount: transactions[2]['amount'],
                   category: transactions[2]['category'],
                   isOutcome: transactions[2]['isOutcome'],
                 ),
               if (transactions.length > 3)
                 TransactionCard(
                   title: transactions[3]['title'],
-                  date: DateFormat(
-                          'yyyy.MMM.dd hh:mm aaa', transactions[3]['date'])
-                      .toString(),
-                  price: transactions[3]['price'],
+                  date: DateFormat('d MMM yyyy h:mm a')
+                      .format(transactions[3]['date']),
+                  amount: transactions[3]['amount'],
                   category: transactions[3]['category'],
                   isOutcome: transactions[3]['isOutcome'],
                 ),

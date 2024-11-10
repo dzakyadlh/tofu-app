@@ -9,6 +9,9 @@ class ConnectedAccountsProvider with ChangeNotifier {
   List<Map<String, dynamic>> _connectedAccounts = [];
   List<Map<String, dynamic>> get connectedAccounts => _connectedAccounts;
 
+  int _totalBalance = 0;
+  int get totalBalance => _totalBalance;
+
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
@@ -27,7 +30,10 @@ class ConnectedAccountsProvider with ChangeNotifier {
           .collection('connected_accounts')
           .get();
 
+      _totalBalance = 0;
+
       _connectedAccounts = snapshot.docs.map((doc) {
+        _totalBalance += doc['balance'] as int;
         return {
           'name': doc['name'],
           'accountNumber': doc['accountNumber'],
@@ -89,6 +95,20 @@ class ConnectedAccountsProvider with ChangeNotifier {
       }
     } catch (e) {
       print("Error updating connected account balance: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<int> calculateTotalBalance() async {
+    try {
+      int totalBalance = 0;
+      for (final account in _connectedAccounts) {
+        totalBalance += account['balance'] as int;
+      }
+      return totalBalance;
+    } catch (e) {
+      print(
+          "Error calculating connected accounts total balance: ${e.toString()}");
       rethrow;
     }
   }

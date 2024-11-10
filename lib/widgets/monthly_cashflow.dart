@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/theme.dart';
 
 class MonthlyCashflow extends StatefulWidget {
@@ -63,6 +65,14 @@ class _MonthlyCashflowState extends State<MonthlyCashflow> {
 
   @override
   Widget build(BuildContext context) {
+    TransactionProvider transactionProvider = Provider.of(context);
+    int selectedYear =
+        DateTime.now().year; // You can make this dynamic as needed
+
+    Map<String, List<Map<String, double>>> data =
+        transactionProvider.getMonthlySummary(selectedYear);
+    List<Map<String, double>> yearSummary = data['monthlySummary']!;
+
     return Column(
       children: [
         AspectRatio(
@@ -115,7 +125,26 @@ class _MonthlyCashflowState extends State<MonthlyCashflow> {
                       show: false,
                     ),
                     groupsSpace: barsSpace,
-                    barGroups: getData(barsWidth, barsSpace),
+                    barGroups: List.generate(yearSummary.length, (index) {
+                      final income = yearSummary[index]['income']!;
+                      final outcome = yearSummary[index]['outcome']!;
+                      return BarChartGroupData(
+                        x: index,
+                        barsSpace: barsSpace,
+                        barRods: [
+                          BarChartRodData(
+                            toY: income + outcome,
+                            rodStackItems: [
+                              BarChartRodStackItem(0, outcome, widget.outcome),
+                              BarChartRodStackItem(
+                                  outcome, income + outcome, widget.income),
+                            ],
+                            borderRadius: BorderRadius.zero,
+                            width: barsWidth,
+                          ),
+                        ],
+                      );
+                    }),
                   ),
                 );
               },

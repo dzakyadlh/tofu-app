@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/theme.dart';
@@ -13,7 +14,7 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  int selectedYear = 0;
+  int selectedYear = DateTime.now().year;
 
   @override
   Widget build(BuildContext context) {
@@ -121,13 +122,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     Widget transactionList(List<Map<String, dynamic>> transactions) {
       return ListView.builder(
           itemCount: transactions.length,
+          shrinkWrap: true,
           itemBuilder: (context, index) {
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
               child: TransactionCard(
                 title: transactions[index]['title'],
-                date: transactions[index]['date'],
-                price: transactions[index]['price'],
+                date: DateFormat('d MMM yyyy h:mm a')
+                    .format(transactions[index]['date']),
+                amount: transactions[index]['amount'],
                 category: transactions[index]['category'],
                 isOutcome: transactions[index]['isOutcome'],
               ),
