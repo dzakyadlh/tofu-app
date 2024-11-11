@@ -36,6 +36,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context, provider, child) {
                 return Skeletonizer(
                   enabled: provider.isLoading ? true : false,
+                  effect: ShimmerEffect(
+                    baseColor: Colors.white24,
+                    highlightColor: Colors.white24,
+                    duration: Duration(seconds: 1),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -122,6 +127,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context, provider, child) {
                 return Skeletonizer(
                   enabled: provider.isLoading ? true : false,
+                  effect: ShimmerEffect(
+                    baseColor: Colors.white24,
+                    highlightColor: Colors.white24,
+                    duration: Duration(seconds: 1),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -232,6 +242,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Consumer<UserProvider>(builder: (context, provider, child) {
               return Skeletonizer(
                   enabled: provider.isLoading,
+                  effect: ShimmerEffect(
+                    baseColor: Colors.white24,
+                    highlightColor: Colors.white24,
+                    duration: Duration(seconds: 1),
+                  ),
                   child: Text(
                     provider.isLoading
                         ? 'sample text'

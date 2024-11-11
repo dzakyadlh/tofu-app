@@ -186,20 +186,22 @@ class _TopUpScreenState extends State<TopUpScreen> {
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SingleChildScrollView(
-          child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            methodSelector(),
-            Divider(
-              color: Colors.white12,
-            ),
-            amountInput(),
-            submitButton(),
-          ],
-        ),
-      )),
+      body: SafeArea(
+        child: SingleChildScrollView(
+            child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              methodSelector(),
+              Divider(
+                color: Colors.white12,
+              ),
+              amountInput(),
+              submitButton(),
+            ],
+          ),
+        )),
+      ),
     );
   }
 }

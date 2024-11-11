@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,9 +43,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     if (cameraPermission.isGranted && photoPermission.isGranted) {
       _pickImage();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Permission denied. Unable to pick image.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Permission denied. Unable to pick image.')),
+        );
+      }
     }
   }
 
@@ -58,8 +58,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         _imageFile = File(image.path);
       });
 
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.uploadProfilePicture(_imageFile!);
+      if (mounted) {
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.uploadProfilePicture(_imageFile!);
+      }
     }
   }
 
@@ -77,12 +79,16 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         phoneNumberController.text,
       );
 
-      Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (_) => false);
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (_) => false);
+      }
     } catch (e) {
-      print(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to complete profile: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to complete profile: ${e.toString()}')),
+        );
+      }
     } finally {
       if (mounted) {
         // Check if the widget is still mounted
@@ -272,10 +278,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
     return Scaffold(
       backgroundColor: backgroundPrimaryColor,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: 48, horizontal: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

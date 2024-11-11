@@ -20,28 +20,33 @@ class _SplashScreenState extends State<SplashScreen> {
   _checkLoginStatus() async {
     AuthProvider authProvider = Provider.of(context, listen: false);
     await Future.delayed(const Duration(milliseconds: 3000));
-    authProvider.isAuthenticated
-        ? Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false)
-        : Navigator.pushNamedAndRemoveUntil(context, '/landing', (_) => false);
+    if (mounted) {
+      authProvider.isAuthenticated
+          ? Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false)
+          : Navigator.pushNamedAndRemoveUntil(
+              context, '/landing', (_) => false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundPrimaryColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/tofu.png'))),
-            )
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 200,
+                height: 200,
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/tofu.png'))),
+              )
+            ],
+          ),
         ),
       ),
     );

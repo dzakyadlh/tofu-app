@@ -2,10 +2,10 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/utils/custom_editing_controller.dart';
+import 'package:tofu/utils/number_format.dart';
 import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
@@ -25,15 +25,15 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
   bool isError = false;
 
   List<String> category = [
-    'payment',
-    'salary',
-    'investment',
-    'business',
-    'self-development',
-    'enjoyments',
-    'grocery',
-    'electricity',
-    'others',
+    'Payment',
+    'Salary',
+    'Investment',
+    'Business',
+    'Self-development',
+    'Enjoyments',
+    'Grocery',
+    'Electricity',
+    'Others',
   ];
 
   @override
@@ -44,29 +44,44 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
   }
 
   Future<void> transfer(String receiverAccountNumber) async {
-    UserProvider userProvider = Provider.of(context);
-    TransactionProvider transactionProvider = Provider.of(context);
-    try {
-      Map<String, dynamic>? receiverUser =
-          await userProvider.fetchUserDataByPhoneNumber(receiverAccountNumber);
-      if (receiverUser != null) {
-        transactionProvider.addTransaction(
-            'Transfer to ${receiverUser['name']}',
-            DateTime.now(),
-            amountController.integerValue!,
-            selectedValue!,
-            'Completed',
-            {
-              'type': 'Tofu Wallet',
-              'accountNumber': userProvider.user['phoneNumber']
-            },
-            {'accountNumber': receiverAccountNumber},
-            true);
-      }
-    } catch (e) {
+    UserProvider userProvider = Provider.of(context, listen: false);
+    Map<String, dynamic>? receiverUser =
+        await userProvider.fetchUserDataByPhoneNumber(receiverAccountNumber);
+    if (receiverUser != null) {
+      Map<String, dynamic> senderTransactionData = {
+        'title': 'Transfer to ${receiverUser['name']}',
+        'amount': amountController.integerValue!,
+        'category': selectedValue!,
+        'status': 'Completed',
+        'method': {
+          'type': 'Tofu Wallet',
+          'accountNumber': userProvider.user['phoneNumber']
+        },
+        'receiver': {'accountNumber': receiverAccountNumber},
+        'isOutcome': true,
+      };
+      Map<String, dynamic> receiverTransactionData = {
+        'id': receiverUser['id'],
+        'title': 'Transfer from ${userProvider.user['name']}',
+        'amount': amountController.integerValue!,
+        'category': selectedValue!,
+        'status': 'Completed',
+        'method': {
+          'type': 'Tofu Wallet',
+          'accountNumber': userProvider.user['phoneNumber']
+        },
+        'sender': {'accountNumber': userProvider.user['phoneNumber']},
+      };
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to transfer: ${e.toString()}')),
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/pin-verification',
+          (_) => false,
+          arguments: {
+            'transactionType': 'transfer',
+            'sender': senderTransactionData,
+            'receiver': receiverTransactionData,
+          },
         );
       }
     }
@@ -107,6 +122,11 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
       return Consumer<UserProvider>(builder: (context, provider, child) {
         return Skeletonizer(
           enabled: provider.isLoading,
+          effect: ShimmerEffect(
+            baseColor: Colors.white24,
+            highlightColor: Colors.white24,
+            duration: Duration(seconds: 1),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -263,7 +283,7 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
                 buttonText: 'Transfer',
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    transfer(receiver?['accountNumber']);
+                    transfer(receiver?['phoneNumber']);
                   }
                 }),
           ],
@@ -334,7 +354,7 @@ class AccountCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                     isSource
-                        ? '\$${balance?.toStringAsFixed(2)}'
+                        ? '\$${formatWithComma(balance!)}'
                         : accountNumber ?? '',
                     style: isSource
                         ? primaryTextStyle.copyWith(

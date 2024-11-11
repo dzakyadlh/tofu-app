@@ -182,17 +182,19 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
     return Scaffold(
       appBar: topBar(),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
-          child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            header(),
-            pinInputField(),
-          ],
+          child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              header(),
+              pinInputField(),
+            ],
+          ),
         ),
       )),
     );

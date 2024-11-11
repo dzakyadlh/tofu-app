@@ -1,9 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/utils/number_format.dart';
+import 'package:tofu/widgets/loading_screen.dart';
 
 class FinancialPlanDetailScreen extends StatefulWidget {
   const FinancialPlanDetailScreen({super.key});
@@ -14,32 +16,12 @@ class FinancialPlanDetailScreen extends StatefulWidget {
 }
 
 class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
-  double _progressValue = 0.0;
-
   bool isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _progressValue = 0.0;
-  }
-
-  void _updateProgress() {
-    Timer.periodic(const Duration(milliseconds: 100), (Timer t) {
-      setState(() {
-        _progressValue += 0.01;
-        if (_progressValue.toStringAsFixed(1) == '1.0') {
-          t.cancel();
-          return;
-        }
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final financialPlan =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
 
     PreferredSizeWidget topBar() {
       return PreferredSize(
@@ -66,7 +48,11 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
       );
     }
 
-    Widget progressBar() {
+    Widget progressBar(int totalBalance) {
+      int progress = (totalBalance / financialPlan['target'] * 100).round();
+      if (progress > 100) {
+        progress = 100;
+      }
       return Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -75,21 +61,14 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '15% Progress',
+                  '$progress%',
                   style: secondaryTextStyle.copyWith(
                     fontSize: 16,
                     fontWeight: semibold,
                   ),
                 ),
-                // Text(
-                //   '${(_progressValue * 100).round()}% Progress',
-                //   style: secondaryTextStyle.copyWith(
-                //     fontSize: 16,
-                //     fontWeight: semibold,
-                //   ),
-                // ),
                 Text(
-                  '125,000/${formatWithComma(financialPlan['target'])}',
+                  '${formatWithComma(totalBalance)}/${formatWithComma(financialPlan['target'])}',
                   style: subtitleTextStyle.copyWith(fontSize: 12),
                 )
               ],
@@ -101,20 +80,16 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
               minHeight: 8,
               backgroundColor: subtitleTextColor,
               valueColor: AlwaysStoppedAnimation(primaryColor),
-              value: 0.15,
+              value: (totalBalance / financialPlan['target']),
             )
-            // LinearProgressIndicator(
-            //   minHeight: 8,
-            //   backgroundColor: subtitleTextColor,
-            //   valueColor: AlwaysStoppedAnimation(primaryColor),
-            //   value: _progressValue,
-            // )
           ],
         ),
       );
     }
 
-    Widget planTarget() {
+    Widget planTarget(int totalBalance) {
+      int neededBalance = financialPlan['target'] - totalBalance;
+
       return Container(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -160,7 +135,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   ),
                 ),
                 Text(
-                  '\$125,000',
+                  '\$${formatWithComma(totalBalance)}',
                   style: primaryTextStyle.copyWith(
                     fontSize: 12,
                   ),
@@ -188,14 +163,23 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                 const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  '-\$875,000',
-                  style: alertTextStyle.copyWith(
-                    fontSize: 20,
-                    fontWeight: bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                neededBalance > 0
+                    ? Text(
+                        '-\$${formatWithComma(neededBalance)}',
+                        style: alertTextStyle.copyWith(
+                          fontSize: 20,
+                          fontWeight: bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
+                    : Text(
+                        '0',
+                        style: primaryTextStyle.copyWith(
+                          fontSize: 20,
+                          fontWeight: bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
               ],
             ),
           ],
@@ -304,7 +288,12 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
       );
     }
 
-    Widget recommendations() {
+    Widget recommendations(int totalBalance) {
+      print(financialPlan['monthsRemaining']);
+      int monthlyTarget = ((financialPlan['target'] - totalBalance) /
+              financialPlan['monthsRemaining'])
+          .round();
+
       return Container(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -330,7 +319,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   ),
                 ),
                 Text(
-                  '\$${financialPlan['monthlyTarget']}',
+                  '\$$monthlyTarget',
                   style: primaryTextStyle.copyWith(
                     fontSize: 12,
                   ),
@@ -346,15 +335,27 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SafeArea(
-          child: Column(
-        children: [
-          progressBar(),
-          planTarget(),
-          planSchedule(),
-          recommendations(),
-        ],
-      )),
+      body: SafeArea(child:
+          Consumer<UserProvider>(builder: (context, userProvider, child) {
+        return Consumer<ConnectedAccountsProvider>(
+            builder: (context, connectedAccountsProvider, child) {
+          if (userProvider.isLoading || connectedAccountsProvider.isLoading) {
+            return LoadingScreen();
+          }
+
+          int totalBalance = userProvider.user['wallet']['balance'] +
+              connectedAccountsProvider.totalBalance;
+
+          return Column(
+            children: [
+              progressBar(totalBalance),
+              planTarget(totalBalance),
+              planSchedule(),
+              recommendations(totalBalance),
+            ],
+          );
+        });
+      })),
     );
   }
 }

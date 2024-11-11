@@ -240,16 +240,20 @@ class _AddConnectedAccountsScreenState
 
     return Scaffold(
       appBar: topBar(),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            accountInput(),
-            submitButton(),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                accountInput(),
+                submitButton(),
+              ],
+            ),
+          ),
         ),
       ),
     );

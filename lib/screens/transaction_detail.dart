@@ -1,41 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:tofu/providers/transaction_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/number_format.dart';
 import 'package:tofu/widgets/custom_outlined_button.dart';
-import 'package:tofu/widgets/loading_screen.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   const TransactionDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    TransactionProvider transactionProvider =
-        Provider.of<TransactionProvider>(context, listen: false);
-
-    final Map<String, dynamic> args =
+    final Map<String, dynamic> transaction =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final String? transactionId = args['id'];
 
     IconData handleIcon(String category) {
       if (category == 'Top Up') {
         return Icons.credit_card;
-      } else if (category == 'electricity') {
+      } else if (category == 'Electricity') {
         return Icons.lightbulb;
-      } else if (category == 'payment') {
+      } else if (category == 'Payment') {
         return Icons.payment;
-      } else if (category == 'salary') {
+      } else if (category == 'Salary') {
         return Icons.attach_money;
-      } else if (category == 'investment') {
+      } else if (category == 'Investment') {
         return Icons.show_chart;
-      } else if (category == 'grocery') {
+      } else if (category == 'Grocery') {
         return Icons.shopping_cart;
-      } else if (category == 'business') {
+      } else if (category == 'Business') {
         return Icons.business_center;
-      } else if (category == 'self-development') {
+      } else if (category == 'Self-development') {
         return Icons.person;
-      } else if (category == 'enjoyments') {
+      } else if (category == 'Enjoyments') {
         return Icons.tag_faces;
       } else {
         return Icons.question_mark;
@@ -62,7 +57,7 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
-    Widget header(Map<String, dynamic> transaction) {
+    Widget header() {
       return Column(
         children: [
           Container(
@@ -81,8 +76,8 @@ class TransactionDetailScreen extends StatelessWidget {
             height: 16,
           ),
           Text(
-            '\$${transaction['amount']}',
-            style: secondaryTextStyle.copyWith(
+            '\$${formatWithComma(transaction['amount'])}',
+            style: primaryTextStyle.copyWith(
               fontWeight: bold,
               fontSize: 16,
             ),
@@ -110,7 +105,7 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
-    Widget details(Map<String, dynamic> transaction) {
+    Widget details() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -170,7 +165,7 @@ class TransactionDetailScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                '12.00 AM',
+                DateFormat('h:mm a').format(transaction['date']),
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -186,7 +181,7 @@ class TransactionDetailScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                '15 Jan 2024',
+                DateFormat('d MMM yyyy').format(transaction['date']),
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -250,8 +245,8 @@ class TransactionDetailScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$${transaction['amount']}',
-                style: secondaryTextStyle.copyWith(
+                '\$${formatWithComma(transaction['amount'])}',
+                style: primaryTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: semibold,
                 ),
@@ -271,44 +266,25 @@ class TransactionDetailScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: topBar(),
-      resizeToAvoidBottomInset: false,
-      backgroundColor: backgroundPrimaryColor,
-      body: FutureBuilder<Map<String, dynamic>?>(
-        future: transactionProvider.fetchTransactionById(transactionId!),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const LoadingScreen();
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(
-              child: Text('Transaction not found'),
-            );
-          } else {
-            final transaction = snapshot.data!;
-            return SafeArea(
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      header(transaction),
-                      SizedBox(
-                        height: 24,
-                      ),
-                      details(transaction),
-                      button(),
-                    ],
+        appBar: topBar(),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: backgroundPrimaryColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  header(),
+                  SizedBox(
+                    height: 24,
                   ),
-                ),
+                  details(),
+                  button(),
+                ],
               ),
-            );
-          }
-        },
-      ),
-    );
+            ),
+          ),
+        ));
   }
 }

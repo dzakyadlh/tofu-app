@@ -15,11 +15,13 @@ class _OutcomePieChartState extends State<OutcomePieChart> {
   int touchedIndex = -1;
 
   handleColor(int percentage) {
-    if (percentage >= 40) {
+    if (percentage >= 60) {
       return Colors.red.shade900;
-    } else if (percentage >= 30) {
+    } else if (percentage >= 40) {
+      return Colors.red.shade600;
+    } else if (percentage >= 25) {
       return Colors.orange.shade800;
-    } else if (percentage >= 15) {
+    } else if (percentage >= 10) {
       return Colors.orange.shade500;
     } else {
       return Colors.yellow.shade600;
@@ -99,7 +101,7 @@ class _OutcomePieChartState extends State<OutcomePieChart> {
                       borderData: FlBorderData(
                         show: false,
                       ),
-                      sectionsSpace: 10,
+                      sectionsSpace: 4,
                       centerSpaceRadius: 60,
                       sections: showingSections(),
                     ),
@@ -110,8 +112,9 @@ class _OutcomePieChartState extends State<OutcomePieChart> {
           ),
         ),
         const SizedBox(height: 16), // Add spacing between chart and legends
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        Wrap(
+          spacing: 8.0, // Space between each legend item
+          runSpacing: 4.0, // Space between rows of legends
           children: generateLegends(outcomeData),
         ),
       ],

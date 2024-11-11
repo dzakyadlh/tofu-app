@@ -25,35 +25,40 @@ class _SigninScreenState extends State<SigninScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of(context);
-
-    handleSignIn() async {
-      try {
+  Future<void> signin() async {
+    AuthProvider authProvider = Provider.of(context, listen: false);
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await authProvider.signIn(emailController.text, passwordController.text);
+      if (authProvider.isAuthenticated) {
         setState(() {
-          isLoading = true;
+          isLoading = false;
         });
-        await authProvider.signIn(
-            emailController.text, passwordController.text);
-        if (authProvider.isAuthenticated) {
-          setState(() {
-            isLoading = false;
-          });
+        if (mounted) {
           Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
         }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
             content: Text(
-          'Sign In Failed: $e',
-          style: alertTextStyle.copyWith(
-            fontWeight: semibold,
-            fontSize: 14,
+              'Sign In Failed: $e',
+              style: alertTextStyle.copyWith(
+                fontWeight: semibold,
+                fontSize: 14,
+              ),
+            ),
           ),
-        )));
+        );
       }
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     Widget inputFields() {
       return Form(
         key: _formKey,
@@ -111,7 +116,7 @@ class _SigninScreenState extends State<SigninScreen> {
                       child: FilledButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            handleSignIn();
+                            signin();
                           }
                         },
                         style: FilledButton.styleFrom(
@@ -166,7 +171,7 @@ class _SigninScreenState extends State<SigninScreen> {
 
     return Scaffold(
       backgroundColor: backgroundPrimaryColor,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

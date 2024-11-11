@@ -15,7 +15,9 @@ class _IncomePieChartState extends State<IncomePieChart> {
   int touchedIndex = -1;
 
   handleColor(int percentage) {
-    if (percentage >= 40) {
+    if (percentage >= 60) {
+      return Colors.purple.shade900;
+    } else if (percentage >= 40) {
       return Colors.purple.shade600;
     } else if (percentage >= 30) {
       return Colors.purple.shade400;
@@ -110,8 +112,9 @@ class _IncomePieChartState extends State<IncomePieChart> {
           ),
         ),
         const SizedBox(height: 16), // Add spacing between chart and legends
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        Wrap(
+          spacing: 8.0, // Space between each legend item
+          runSpacing: 4.0, // Space between rows of legends
           children: generateLegends(incomeData),
         ),
       ],

@@ -71,15 +71,17 @@ class UserProvider with ChangeNotifier {
           .get();
 
       if (snapshot.docs.isNotEmpty) {
-        final doc = snapshot.docs.first.data() as Map<String, dynamic>;
+        final doc = snapshot.docs.first;
+        final data = doc.data() as Map<String, dynamic>;
 
         Map<String, dynamic> walletData =
-            doc['wallet'] is Map<String, dynamic> ? doc['wallet'] : {};
+            data['wallet'] is Map<String, dynamic> ? data['wallet'] : {};
         return {
-          'email': doc['email'] ?? '',
-          'name': doc['name'] ?? '',
-          'phoneNumber': doc['phoneNumber'] ?? '',
-          'profilePicture': doc['profilePicture'] ?? '',
+          'id': doc.id,
+          'email': data['email'] ?? '',
+          'name': data['name'] ?? '',
+          'phoneNumber': data['phoneNumber'] ?? '',
+          'profilePicture': data['profilePicture'] ?? '',
           'wallet': {
             'balance': walletData['balance'] ?? 0,
           },
@@ -158,7 +160,6 @@ class UserProvider with ChangeNotifier {
     }
 
     String encryptedPin = _pinEncryption.hashPin(pin);
-    print(encryptedPin.toString());
 
     try {
       await _firestore.collection('users').doc(user.uid).set({
@@ -168,7 +169,6 @@ class UserProvider with ChangeNotifier {
           'pin': encryptedPin,
         },
       }, SetOptions(merge: true));
-      print('added wallet');
       await fetchUserData();
     } catch (e) {
       print("Error creating wallet: ${e.toString()}");
@@ -176,18 +176,16 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateWalletBalance(int amount) async {
-    final user = _firebaseAuth.currentUser;
-    if (user == null) {
-      throw Exception('Not authenticated');
+  Future<void> updateWalletBalance(String uid, int amount) async {
+    if (uid == 'currentUser') {
+      uid = _firebaseAuth.currentUser!.uid;
     }
-
     try {
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+      final userDoc = await _firestore.collection('users').doc(uid).get();
       int currentBalance = userDoc.data()?['wallet']['balance'] ?? 0;
       int newBalance = currentBalance + amount;
 
-      await _firestore.collection('users').doc(user.uid).update({
+      await _firestore.collection('users').doc(uid).update({
         'wallet.balance': newBalance,
       });
       await fetchUserData();

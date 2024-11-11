@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/number_format.dart';
 import 'package:tofu/widgets/custom_outlined_button.dart';
 import 'package:tofu/widgets/loading_screen.dart';
 
@@ -11,26 +13,24 @@ class TransactionSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IconData transactionIcon = Icons.question_mark;
-
     IconData handleIcon(String category) {
       if (category == 'Top Up') {
         return Icons.credit_card;
-      } else if (category == 'electricity') {
+      } else if (category == 'Electricity') {
         return Icons.lightbulb;
-      } else if (category == 'payment') {
+      } else if (category == 'Payment') {
         return Icons.payment;
-      } else if (category == 'salary') {
+      } else if (category == 'Salary') {
         return Icons.attach_money;
-      } else if (category == 'investment') {
+      } else if (category == 'Investment') {
         return Icons.show_chart;
-      } else if (category == 'grocery') {
+      } else if (category == 'Grocery') {
         return Icons.shopping_cart;
-      } else if (category == 'business') {
+      } else if (category == 'Business') {
         return Icons.business_center;
-      } else if (category == 'self-development') {
+      } else if (category == 'Self-development') {
         return Icons.person;
-      } else if (category == 'enjoyments') {
+      } else if (category == 'Enjoyments') {
         return Icons.tag_faces;
       } else {
         return Icons.question_mark;
@@ -57,23 +57,23 @@ class TransactionSuccessScreen extends StatelessWidget {
       return Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white12,
               borderRadius: BorderRadius.circular(defaultRadius),
             ),
             child: Icon(
-              transactionIcon,
+              handleIcon(transaction['category']),
               color: primaryColor,
-              size: 60,
+              size: 48,
             ),
           ),
           const SizedBox(
             height: 16,
           ),
           Text(
-            '\$${transaction['amount']}',
-            style: secondaryTextStyle.copyWith(
+            '\$${formatWithComma(transaction['amount'])}',
+            style: primaryTextStyle.copyWith(
               fontWeight: bold,
               fontSize: 16,
             ),
@@ -82,7 +82,7 @@ class TransactionSuccessScreen extends StatelessWidget {
             height: 8,
           ),
           Text(
-            '${transaction['category']}',
+            '${transaction['title']}',
             style: secondaryTextStyle.copyWith(
               fontWeight: semibold,
               fontSize: 14,
@@ -108,7 +108,7 @@ class TransactionSuccessScreen extends StatelessWidget {
           Text(
             'Transaction Detail',
             style: secondaryTextStyle.copyWith(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: semibold,
             ),
           ),
@@ -161,7 +161,7 @@ class TransactionSuccessScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                '12.00 AM',
+                DateFormat('h:mm a').format(transaction['date']),
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -177,7 +177,7 @@ class TransactionSuccessScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                '15 Jan 2024',
+                DateFormat('d MMM yyyy').format(transaction['date']),
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -236,14 +236,14 @@ class TransactionSuccessScreen extends StatelessWidget {
               Text(
                 'Total Amount',
                 style: secondaryTextStyle.copyWith(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: semibold,
                 ),
               ),
               Text(
-                '\$${transaction['amount']}',
-                style: secondaryTextStyle.copyWith(
-                  fontSize: 16,
+                '\$${formatWithComma(transaction['amount'])}',
+                style: primaryTextStyle.copyWith(
+                  fontSize: 14,
                   fontWeight: semibold,
                 ),
               ),
@@ -255,7 +255,7 @@ class TransactionSuccessScreen extends StatelessWidget {
 
     Widget buttons() {
       return Padding(
-        padding: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.symmetric(vertical: 24),
         child: Column(
           children: [
             CustomOutlinedButton(buttonText: 'Share Receipt', onPressed: () {}),
@@ -285,7 +285,6 @@ class TransactionSuccessScreen extends StatelessWidget {
               if (provider.isLoading) {
                 return LoadingScreen();
               }
-              handleIcon(provider.transactions[0]['category']);
               return Column(
                 children: [
                   header(provider.transactions[0]),

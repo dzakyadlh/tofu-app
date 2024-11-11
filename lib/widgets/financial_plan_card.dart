@@ -113,6 +113,11 @@ class SkeletonFinancialPlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Skeletonizer(
       enabled: true,
+      effect: ShimmerEffect(
+        baseColor: Colors.white24,
+        highlightColor: Colors.white24,
+        duration: Duration(seconds: 1),
+      ),
       child: Container(
         width: 300,
         padding: const EdgeInsets.all(8),

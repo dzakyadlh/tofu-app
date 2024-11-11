@@ -54,6 +54,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                             connectedAccountProvider.isLoading
                         ? true
                         : false,
+                    effect: ShimmerEffect(
+                      baseColor: Colors.white24,
+                      highlightColor: Colors.white24,
+                      duration: Duration(seconds: 1),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -159,6 +164,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               if (provider.isLoading) {
                 return Skeletonizer(
                     enabled: true,
+                    effect: ShimmerEffect(
+                      baseColor: Colors.white24,
+                      highlightColor: Colors.white24,
+                      duration: Duration(seconds: 1),
+                    ),
                     child: SizedBox(
                       width: 100,
                       height: 100,
@@ -210,6 +220,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               if (provider.isLoading) {
                 return Skeletonizer(
                     enabled: true,
+                    effect: ShimmerEffect(
+                      baseColor: Colors.white24,
+                      highlightColor: Colors.white24,
+                      duration: Duration(seconds: 1),
+                    ),
                     child: SizedBox(
                       width: 100,
                       height: 100,

@@ -122,18 +122,23 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     Widget transactionList(List<Map<String, dynamic>> transactions) {
       return ListView.builder(
           itemCount: transactions.length,
-          shrinkWrap: true,
           itemBuilder: (context, index) {
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
-              child: TransactionCard(
-                id: transactions[index]['id'],
-                title: transactions[index]['title'],
-                date: DateFormat('d MMM yyyy h:mm a')
-                    .format(transactions[index]['date']),
-                amount: transactions[index]['amount'],
-                category: transactions[index]['category'],
-                isOutcome: transactions[index]['isOutcome'],
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/transaction-detail',
+                      arguments: transactions[index]);
+                },
+                child: TransactionCard(
+                  id: transactions[index]['id'],
+                  title: transactions[index]['title'],
+                  date: DateFormat('d MMM yyyy h:mm a')
+                      .format(transactions[index]['date']),
+                  amount: transactions[index]['amount'],
+                  category: transactions[index]['category'],
+                  isOutcome: transactions[index]['isOutcome'],
+                ),
               ),
             );
           });

@@ -27,23 +27,41 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of(context);
-
-    handleSignUp() async {
+  Future<void> signup() async {
+    AuthProvider authProvider = Provider.of(context, listen: false);
+    try {
       setState(() {
         isLoading = true;
       });
-
       await authProvider.signUp(emailController.text, passwordController.text);
       if (authProvider.isAuthenticated) {
-        isLoading = false;
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/complete-profile', (_) => false);
+        setState(() {
+          isLoading = false;
+        });
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/complete-profile', (_) => false);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Sign In Failed: $e',
+              style: alertTextStyle.copyWith(
+                fontWeight: semibold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        );
       }
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     Widget inputFields() {
       return Form(
         key: _formKey,
@@ -101,7 +119,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: FilledButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            handleSignUp();
+                            signup();
                           }
                         },
                         style: FilledButton.styleFrom(
@@ -156,7 +174,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return Scaffold(
       backgroundColor: backgroundPrimaryColor,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -35,24 +35,22 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
 
   bool isError = false;
 
-  @override
-  Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of(context);
-    ConnectedAccountsProvider connectedAccountsProvider = Provider.of(context);
-    TransactionProvider transactionProvider = Provider.of(context);
-
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final int? transactionAmount = args['transactionAmount'];
-    final String? transactionType = args['transactionType'];
-
-    handleVerifyPin() async {
-      try {
-        bool isPinCorrect = await userProvider.verifyPin(pinController.text);
-        if (isPinCorrect) {
-          if (transactionType == 'Top Up') {
-            Map<String, dynamic>? connectedAccount = args['connectedAccount'];
-            await userProvider.updateWalletBalance(transactionAmount!);
+  Future<void> transaction(Map<String, dynamic> args) async {
+    UserProvider userProvider = Provider.of(context, listen: false);
+    ConnectedAccountsProvider connectedAccountsProvider =
+        Provider.of(context, listen: false);
+    TransactionProvider transactionProvider =
+        Provider.of(context, listen: false);
+    try {
+      bool isPinCorrect = await userProvider.verifyPin(pinController.text);
+      if (isPinCorrect) {
+        final String? transactionType = args['transactionType'];
+        if (transactionType == 'Top Up') {
+          final int? transactionAmount = args['transactionAmount'];
+          Map<String, dynamic>? connectedAccount = args['connectedAccount'];
+          try {
+            await userProvider.updateWalletBalance(
+                'currentUser', transactionAmount!);
             await connectedAccountsProvider.updateConnectedAccountBalance(
               connectedAccount?['accountNumber'],
               -transactionAmount,
@@ -73,27 +71,90 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
               },
               false,
             );
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/transaction-success',
-              (_) => false,
-            );
+            if (mounted) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/transaction-success',
+                (_) => false,
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed to top up: ${e.toString()}')),
+              );
+            }
           }
-        } else {
-          setState(() {
-            pinController.clear();
-            isError = true;
-          });
+        } else if (transactionType == 'transfer') {
+          final Map<String, dynamic>? sender = args['sender'];
+          final Map<String, dynamic>? receiver = args['receiver'];
+
+          if (sender != null && receiver != null) {
+            DateTime now = DateTime.now();
+            try {
+              await transactionProvider.addTransaction(
+                  sender['title'],
+                  now,
+                  sender['amount'],
+                  sender['category'],
+                  sender['status'],
+                  sender['method'],
+                  sender['receiver'],
+                  sender['isOutcome']);
+              await userProvider.updateWalletBalance(
+                  'currentUser', -sender['amount']);
+              await transactionProvider.addTransactionToOtherUser(
+                  receiver['id'],
+                  receiver['title'],
+                  now,
+                  receiver['amount'],
+                  receiver['category'],
+                  receiver['status'],
+                  receiver['method'],
+                  receiver['sender']);
+              await userProvider.updateWalletBalance(
+                  receiver['id'], receiver['amount']);
+              if (mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/transaction-success',
+                  (_) => false,
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Failed to transfer: ${e.toString()}')),
+                );
+              }
+            }
+          }
         }
-      } catch (e) {
-        // Handle any errors (e.g., connection issues)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error verifying PIN: ${e.toString()}'),
-            backgroundColor: errorColor,
-          ),
-        );
+      } else {
+        setState(() {
+          pinController.clear();
+          isError = true;
+        });
       }
+    } catch (e) {
+      // Handle any errors (e.g., connection issues)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error verifying PIN: ${e.toString()}'),
+          backgroundColor: errorColor,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+
+    handleVerifyPin() {
+      transaction(args);
     }
 
     final focusedBorderColor = tertiaryColor;
@@ -218,22 +279,26 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
 
     return Scaffold(
       appBar: topBar(),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            header(),
-            pinInputField(),
-            isError
-                ? Text(
-                    'Incorrect PIN number. Please try again',
-                    style: errorTextStyle.copyWith(fontSize: 12),
-                  )
-                : SizedBox()
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                header(),
+                pinInputField(),
+                isError
+                    ? Text(
+                        'Incorrect PIN number. Please try again',
+                        style: errorTextStyle.copyWith(fontSize: 12),
+                      )
+                    : SizedBox()
+              ],
+            ),
+          ),
         ),
       ),
     );

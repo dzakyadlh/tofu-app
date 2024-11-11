@@ -44,7 +44,9 @@ class TransactionProvider with ChangeNotifier {
           DateTime date = (doc['date'] as Timestamp).toDate();
           int amount = doc['amount'];
           String category = doc['category'];
+          Map<String, dynamic> method = doc['method'];
           Map<String, dynamic> receiver = doc['receiver'];
+          String status = doc['status'];
           bool isOutcome = doc['isOutcome'];
 
           return {
@@ -53,7 +55,9 @@ class TransactionProvider with ChangeNotifier {
             'date': date,
             'amount': amount,
             'category': category,
+            'method': method,
             'receiver': receiver,
+            'status': status,
             'isOutcome': isOutcome
           };
         }).toList();
@@ -62,50 +66,6 @@ class TransactionProvider with ChangeNotifier {
       });
     } catch (e) {
       print("Error fetching transactions: ${e.toString()}");
-      rethrow;
-    }
-  }
-
-  Future<Map<String, dynamic>?> fetchTransactionById(
-      String transactionId) async {
-    final uid = _firebaseAuth.currentUser?.uid;
-    if (uid == null) return null;
-
-    try {
-      DocumentSnapshot doc = await _firestore
-          .collection('users')
-          .doc(uid)
-          .collection('transactions')
-          .doc(transactionId)
-          .get();
-
-      if (doc.exists) {
-        String title = doc['title'];
-        DateTime date = (doc['date'] as Timestamp).toDate();
-        int amount = doc['amount'];
-        String category = doc['category'];
-        Map<String, dynamic> method = doc['method'];
-        Map<String, dynamic> receiver = doc['receiver'];
-        String status = doc['status'];
-        bool isOutcome = doc['isOutcome'];
-
-        return {
-          'id': doc.id,
-          'title': title,
-          'date': date,
-          'amount': amount,
-          'category': category,
-          'method': method,
-          'receiver': receiver,
-          'status': status,
-          'isOutcome': isOutcome
-        };
-      } else {
-        print("Transaction with ID $transactionId not found.");
-        return null;
-      }
-    } catch (e) {
-      print("Error fetching transaction by ID: ${e.toString()}");
       rethrow;
     }
   }
@@ -137,6 +97,38 @@ class TransactionProvider with ChangeNotifier {
         'method': method,
         'receiver': receiver,
         'isOutcome': isOutcome,
+      });
+      notifyListeners();
+    } catch (e) {
+      print("Error adding transaction: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<void> addTransactionToOtherUser(
+    String uid,
+    String title,
+    DateTime date,
+    int amount,
+    String category,
+    String status,
+    Map<String, dynamic> method,
+    Map<String, dynamic> sender,
+  ) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('transactions')
+          .add({
+        'title': title,
+        'date': date,
+        'amount': amount,
+        'category': category,
+        'status': status,
+        'method': method,
+        'sender': sender,
+        'isOutcome': false,
       });
       notifyListeners();
     } catch (e) {

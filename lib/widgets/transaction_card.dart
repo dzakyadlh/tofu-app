@@ -26,28 +26,28 @@ class TransactionCard extends StatelessWidget {
       case 'Top Up':
         transactionIcon = Icons.credit_card;
         break;
-      case 'electricity':
+      case 'Electricity':
         transactionIcon = Icons.lightbulb;
         break;
-      case 'payment':
+      case 'Payment':
         transactionIcon = Icons.payment;
         break;
-      case 'salary':
+      case 'Salary':
         transactionIcon = Icons.attach_money;
         break;
-      case 'investment':
+      case 'Investment':
         transactionIcon = Icons.show_chart;
         break;
-      case 'grocery':
+      case 'Grocery':
         transactionIcon = Icons.shopping_cart;
         break;
-      case 'business':
+      case 'Business':
         transactionIcon = Icons.business_center;
         break;
-      case 'self-development':
+      case 'Self-development':
         transactionIcon = Icons.person;
         break;
-      case 'enjoyments':
+      case 'Enjoyments':
         transactionIcon = Icons.tag_faces;
         break;
       default:
@@ -55,69 +55,63 @@ class TransactionCard extends StatelessWidget {
         break;
     }
 
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, '/transaction-detail',
-            arguments: {'id': id});
-      },
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        margin: const EdgeInsets.only(bottom: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                      color: Colors.white10,
-                      borderRadius: BorderRadius.circular(defaultRadius)),
-                  child: Icon(
-                    transactionIcon,
-                    color: primaryColor,
-                    size: 24,
+    return Container(
+      padding: const EdgeInsets.all(8),
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(defaultRadius)),
+                child: Icon(
+                  transactionIcon,
+                  color: primaryColor,
+                  size: 24,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: secondaryTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: semibold,
+                    ),
                   ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: secondaryTextStyle.copyWith(
-                        fontSize: 14,
-                        fontWeight: semibold,
-                      ),
-                    ),
-                    Text(
-                      date,
-                      style: subtitleTextStyle.copyWith(
-                        fontSize: 12,
-                        fontWeight: light,
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
-            isOutcome
-                ? Text(
-                    '-\$$amount',
-                    style: alertTextStyle.copyWith(
-                      fontSize: 14,
-                      fontWeight: semibold,
+                  Text(
+                    date,
+                    style: subtitleTextStyle.copyWith(
+                      fontSize: 12,
+                      fontWeight: light,
                     ),
                   )
-                : Text(
-                    '+\$$amount',
-                    style: primaryTextStyle.copyWith(
-                      fontSize: 14,
-                      fontWeight: semibold,
-                    ),
-                  )
-          ],
-        ),
+                ],
+              ),
+            ],
+          ),
+          isOutcome
+              ? Text(
+                  '-\$$amount',
+                  style: alertTextStyle.copyWith(
+                    fontSize: 14,
+                    fontWeight: semibold,
+                  ),
+                )
+              : Text(
+                  '+\$$amount',
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 14,
+                    fontWeight: semibold,
+                  ),
+                )
+        ],
       ),
     );
   }

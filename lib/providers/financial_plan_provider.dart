@@ -53,7 +53,8 @@ class FinancialPlanProvider with ChangeNotifier {
             'deadline': deadline,
             'timeRemaining':
                 '$yearsRemaining years $monthsRemaining months $daysRemaining days',
-            'monthlyTarget': monthlyTarget.isNaN ? 0 : monthlyTarget
+            'monthlyTarget': monthlyTarget.isNaN ? 0 : monthlyTarget,
+            'monthsRemaining': timeRemaining.inDays ~/ 30,
           };
         }).toList();
         _isLoading = false;

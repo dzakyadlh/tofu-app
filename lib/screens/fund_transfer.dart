@@ -5,7 +5,6 @@ import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/account_card.dart';
-import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 import 'package:tofu/widgets/custom_outlined_button.dart';
 
@@ -249,6 +248,11 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
             if (provider.isLoading) {
               return Skeletonizer(
                 enabled: true,
+                effect: ShimmerEffect(
+                  baseColor: Colors.white24,
+                  highlightColor: Colors.white24,
+                  duration: Duration(seconds: 1),
+                ),
                 child: ListView.builder(
                   itemCount: 7,
                   itemBuilder: (context, index) {
@@ -285,7 +289,7 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
 
     return Scaffold(
       appBar: topBar(),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
         child: Column(

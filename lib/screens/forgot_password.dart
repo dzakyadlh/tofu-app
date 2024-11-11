@@ -153,18 +153,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       appBar: topBar(),
       backgroundColor: backgroundPrimaryColor,
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            header(),
-            const SizedBox(
-              height: 8,
-            ),
-            inputFields(),
-          ],
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              header(),
+              const SizedBox(
+                height: 8,
+              ),
+              inputFields(),
+            ],
+          ),
         ),
       ),
     );

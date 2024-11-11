@@ -229,26 +229,28 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
 
     return Scaffold(
       appBar: topBar(),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
-          child: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            inputFields(),
-            const SizedBox(
-              height: 32,
-            ),
-            CustomFilledButton(
-              buttonText: 'Submit Plan',
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  handleSubmit();
-                }
-              },
-            )
-          ],
+          child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              inputFields(),
+              const SizedBox(
+                height: 32,
+              ),
+              CustomFilledButton(
+                buttonText: 'Submit Plan',
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    handleSubmit();
+                  }
+                },
+              )
+            ],
+          ),
         ),
       )),
     );
