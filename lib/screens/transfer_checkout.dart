@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/custom_editing_controller.dart';
 import 'package:tofu/widgets/custom_filled_button.dart';
+import 'package:tofu/widgets/custom_input_field.dart';
 
-class TransferCheckoutScreen extends StatelessWidget {
+class TransferCheckoutScreen extends StatefulWidget {
   const TransferCheckoutScreen({super.key});
+
+  @override
+  State<TransferCheckoutScreen> createState() => _TransferCheckoutScreenState();
+}
+
+class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
+  final amountController = IntegerTextEditingController();
+  final noteController = TextEditingController(text: '');
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,68 +50,79 @@ class TransferCheckoutScreen extends StatelessWidget {
       );
     }
 
+    Widget header() {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          'From',
+          style: subtitleTextStyle.copyWith(
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        AccountCard(
+          accountName: 'Finplan',
+          balance: 5000,
+          isSource: true,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Transfer to',
+          style: subtitleTextStyle.copyWith(
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        AccountCard(
+          accountName: 'Rei Mizuki',
+          accountNumber: '12478128912381',
+          isSource: false,
+        ),
+      ]);
+    }
+
+    Widget inputFields() {
+      return Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomInputField(
+              labelText: 'Insert an amount',
+              hintText: '0',
+              controller: amountController,
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 8),
+            CustomInputField(
+              labelText: 'Additional Note for Rei Mizuki',
+              hintText: 'My part for dinner last week',
+              controller: noteController,
+            ),
+            const SizedBox(height: 32),
+            CustomFilledButton(
+                buttonText: 'Transfer',
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    Navigator.pushNamed(context, '/pin-verification');
+                  }
+                }),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: topBar(),
       backgroundColor: const Color(0xFF222222),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'From',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                AccountCard(
-                  accountName: 'Finplan',
-                  balance: 5000,
-                  isSource: true,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Transfer to',
-                  style: subtitleTextStyle.copyWith(
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                AccountCard(
-                  accountName: 'Rei Mizuki',
-                  accountNumber: '12478128912381',
-                  isSource: false,
-                ),
-                const SizedBox(height: 32),
-                Form(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      InputField(
-                        label: 'Insert an amount',
-                        hintText: '0',
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 16),
-                      InputField(
-                        label: 'Additional Note for Rei Mizuki',
-                        hintText: 'My part for the dinner last week',
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 32),
-                      CustomFilledButton(
-                          buttonText: 'Transfer',
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/pin-verification');
-                          }),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              header(),
+              inputFields(),
+            ],
           ),
         ),
       ),
@@ -163,59 +192,6 @@ class AccountCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class InputField extends StatelessWidget {
-  final String label;
-  final String hintText;
-  final TextInputType keyboardType;
-  final int maxLines;
-
-  const InputField({
-    super.key,
-    required this.label,
-    required this.hintText,
-    this.keyboardType = TextInputType.text,
-    this.maxLines = 1,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: primaryTextStyle.copyWith(fontSize: 14)),
-        const SizedBox(height: 6),
-        TextFormField(
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: subtitleTextStyle.copyWith(fontSize: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF9E9E9E)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF9E9E9E)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFFB0E8C9)),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          ),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontFamily: 'Sora',
-          ),
-          keyboardType: keyboardType,
-          maxLines: maxLines,
-        ),
-      ],
     );
   }
 }

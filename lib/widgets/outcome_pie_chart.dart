@@ -3,205 +3,195 @@ import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
 
 class OutcomePieChart extends StatefulWidget {
-  const OutcomePieChart({super.key});
+  final Map<String, Map<String, double>> transactionData;
+
+  const OutcomePieChart({super.key, required this.transactionData});
 
   @override
-  State<StatefulWidget> createState() => OutcomePieChartState();
+  State<StatefulWidget> createState() => _OutcomePieChartState();
 }
 
-class OutcomePieChartState extends State {
-  int touchedIndex = 0;
+class _OutcomePieChartState extends State<OutcomePieChart> {
+  int touchedIndex = -1;
+
+  handleColor(int percentage) {
+    if (percentage >= 40) {
+      return Colors.red.shade900;
+    } else if (percentage >= 30) {
+      return Colors.orange.shade800;
+    } else if (percentage >= 15) {
+      return Colors.orange.shade500;
+    } else {
+      return Colors.yellow.shade600;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        AspectRatio(
-          aspectRatio: 1,
-          child: PieChart(
-            PieChartData(
-              pieTouchData: PieTouchData(
-                touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                  setState(() {
-                    if (!event.isInterestedForInteractions ||
-                        pieTouchResponse == null ||
-                        pieTouchResponse.touchedSection == null) {
-                      touchedIndex = -1;
-                      return;
-                    }
-                    touchedIndex =
-                        pieTouchResponse.touchedSection!.touchedSectionIndex;
-                  });
-                },
-              ),
-              borderData: FlBorderData(show: false),
-              sectionsSpace: 0,
-              centerSpaceRadius: 0,
-              sections: showingSections(),
+    final outcomeData = widget.transactionData;
+    bool hasOutcome = outcomeData.values
+        .any((categoryData) => (categoryData['outcome'] ?? 0) > 0);
+
+    if (!hasOutcome) {
+      return Center(
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/images/despair.png',
+              width: 200,
+              fit: BoxFit.fitWidth,
             ),
-          ),
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              "You don't have any outcome data.",
+              style: secondaryTextStyle.copyWith(
+                fontSize: 14,
+                fontWeight: semibold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 4,
+            ),
+            Text(
+              "Don't be stingy! Spend some money when you need it.",
+              style: subtitleTextStyle.copyWith(
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-        FittedBox(
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        AspectRatio(
+          aspectRatio: 1.3,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLegendItem(tertiaryColor, 'Category 1'),
-              const SizedBox(width: 10),
-              _buildLegendItem(Colors.yellow.shade600, 'Category 2'),
-              const SizedBox(width: 10),
-              _buildLegendItem(Colors.purple.shade700, 'Category 3'),
-              const SizedBox(width: 10),
-              _buildLegendItem(Colors.blue.shade700, 'Category 4'),
+            children: <Widget>[
+              const SizedBox(
+                height: 18,
+              ),
+              Expanded(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: PieChart(
+                    PieChartData(
+                      pieTouchData: PieTouchData(
+                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                          setState(() {
+                            if (!event.isInterestedForInteractions ||
+                                pieTouchResponse == null ||
+                                pieTouchResponse.touchedSection == null) {
+                              touchedIndex = -1;
+                              return;
+                            }
+                            touchedIndex = pieTouchResponse
+                                .touchedSection!.touchedSectionIndex;
+                          });
+                        },
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      sectionsSpace: 10,
+                      centerSpaceRadius: 60,
+                      sections: showingSections(),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildLegendItem(Color color, String text) {
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            color: color,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: secondaryTextStyle,
+        const SizedBox(height: 16), // Add spacing between chart and legends
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: generateLegends(outcomeData),
         ),
       ],
     );
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 20.0 : 16.0;
-      final radius = isTouched ? 110.0 : 100.0;
-      final widgetSize = isTouched ? 55.0 : 40.0;
-      const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
+    final outcomeData = widget.transactionData;
+    double totalOutcome = 0;
 
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: errorColor,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xffffffff),
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/images/visa.png',
-              size: widgetSize,
-              borderColor: tertiaryColor,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Colors.yellow.shade900,
-            value: 30,
-            title: '30%',
-            radius: radius,
+    // Calculate the total outcome
+    outcomeData.forEach((_, categoryData) {
+      totalOutcome += categoryData['outcome'] ?? 0;
+    });
+
+    // Generate pie chart sections
+    List<PieChartSectionData> sections = [];
+    int index = 0;
+    outcomeData.forEach((category, categoryData) {
+      double outcome = categoryData['outcome'] ?? 0;
+      if (outcome > 0) {
+        double percentage = (outcome / totalOutcome) * 100;
+        sections.add(
+          PieChartSectionData(
+            color: handleColor(percentage.toInt()),
+            value: percentage,
+            title: '${percentage.toStringAsFixed(1)}%',
+            radius: index == touchedIndex ? 60.0 : 50.0,
             titleStyle: secondaryTextStyle.copyWith(
-              fontSize: fontSize,
-              fontWeight: bold,
-              shadows: shadows,
+              fontSize: index == touchedIndex ? 16.0 : 12.0,
+              fontWeight: semibold,
+              shadows: [const Shadow(color: Colors.black, blurRadius: 2)],
             ),
-            badgeWidget: _Badge(
-              'assets/icons/librarian-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: backgroundPrimaryColor,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 2:
-          return PieChartSectionData(
-            color: Colors.yellow.shade600,
-            value: 16,
-            title: '16%',
-            radius: radius,
-            titleStyle: secondaryTextStyle.copyWith(
-              fontSize: fontSize,
-              fontWeight: bold,
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/fitness-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: Colors.black,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        case 3:
-          return PieChartSectionData(
-            color: Colors.yellow.shade500,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: secondaryTextStyle.copyWith(
-              fontSize: fontSize,
-              fontWeight: bold,
-              shadows: shadows,
-            ),
-            badgeWidget: _Badge(
-              'assets/icons/worker-svgrepo-com.svg',
-              size: widgetSize,
-              borderColor: backgroundPrimaryColor,
-            ),
-            badgePositionPercentageOffset: .98,
-          );
-        default:
-          throw Exception('Oh no');
+          ),
+        );
+        index++;
       }
     });
+
+    return sections;
   }
-}
 
-class _Badge extends StatelessWidget {
-  const _Badge(
-    this.svgAsset, {
-    required this.size,
-    required this.borderColor,
-  });
-  final String svgAsset;
-  final double size;
-  final Color borderColor;
+  List<Widget> generateLegends(Map<String, Map<String, double>> outcomeData) {
+    List<Widget> legends = [];
+    int index = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: PieChart.defaultDuration,
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: borderColor,
-          width: 2,
-        ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withOpacity(.5),
-            offset: const Offset(3, 3),
-            blurRadius: 3,
+    outcomeData.forEach((category, categoryData) {
+      double outcome = categoryData['outcome'] ?? 0;
+      if (outcome > 0) {
+        // Generate legend only for categories with outcome
+        legends.add(
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    color: handleColor(((outcome /
+                            (outcomeData.values.fold(0,
+                                (sum, item) => sum + (item['outcome'] ?? 0))) *
+                            100))
+                        .toInt()),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  category,
+                  style: secondaryTextStyle.copyWith(fontSize: 10),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-      padding: EdgeInsets.all(size * .15),
-      child: Center(),
-    );
+        );
+        index++;
+      }
+    });
+
+    return legends;
   }
 }

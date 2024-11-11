@@ -14,6 +14,12 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
   final targetAccountController = TextEditingController(text: '');
 
   @override
+  void dispose() {
+    targetAccountController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     PreferredSizeWidget topBar() {
       return PreferredSize(

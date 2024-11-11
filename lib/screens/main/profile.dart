@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:tofu/providers/auth_provider.dart';
@@ -43,8 +44,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 60,
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          image: const DecorationImage(
-                              image: AssetImage('assets/images/song.jpg'),
+                          image: DecorationImage(
+                              image:
+                                  NetworkImage(provider.user['profilePicture']),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -75,7 +77,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Widget personalData() {
       return Container(
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.only(bottom: 16),
         child: Column(
@@ -91,7 +96,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/update-profile');
+                  },
                   child: const Icon(
                     Icons.edit,
                     size: 24,
@@ -134,7 +141,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: secondaryTextStyle.copyWith(fontSize: 14),
                           ),
                           Text(
-                            '${provider.user['birthDate']}',
+                            DateFormat('d MMM yyyy')
+                                .format(provider.user['birthDate']),
                             style: subtitleTextStyle.copyWith(fontSize: 14),
                           )
                         ],
@@ -186,7 +194,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Widget balance() {
       return Container(
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.only(bottom: 16),
         child: Column(
@@ -287,7 +298,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Widget settings() {
       return Container(
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.only(bottom: 16),
         child: Column(

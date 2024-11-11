@@ -127,6 +127,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
               child: TransactionCard(
+                id: transactions[index]['id'],
                 title: transactions[index]['title'],
                 date: DateFormat('d MMM yyyy h:mm a')
                     .format(transactions[index]['date']),

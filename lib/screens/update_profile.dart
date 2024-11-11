@@ -8,25 +8,40 @@ import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
-class CompleteProfileScreen extends StatefulWidget {
-  const CompleteProfileScreen({super.key});
+class UpdateProfileScreen extends StatefulWidget {
+  const UpdateProfileScreen({super.key});
 
   @override
-  State<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
+  State<UpdateProfileScreen> createState() => _UpdateProfileScreenState();
 }
 
-class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
-  final nameController = TextEditingController(text: '');
-  DateTime? selectedDeadline;
-  final occupationController = TextEditingController(text: '');
-  final phoneNumberController = TextEditingController(text: '');
-  final _formKey = GlobalKey<FormState>();
+class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
+  late final TextEditingController nameController;
+  late DateTime? selectedDeadline;
+  late final TextEditingController occupationController;
+  late final TextEditingController phoneNumberController;
+  String profilePicture = '';
+  late final GlobalKey<FormState> _formKey;
 
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
   bool isLoading = false;
   bool isPermitted = false;
+
+  @override
+  void initState() {
+    UserProvider userProvider = Provider.of(context, listen: false);
+    nameController = TextEditingController(text: userProvider.user['name']);
+    selectedDeadline = userProvider.user['birthDate'];
+    occupationController =
+        TextEditingController(text: userProvider.user['occupation']);
+    phoneNumberController =
+        TextEditingController(text: userProvider.user['phoneNumber']);
+    profilePicture = userProvider.user['profilePicture'];
+    _formKey = GlobalKey<FormState>();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -74,7 +89,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         occupationController.text,
         phoneNumberController.text,
       );
-      Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (_) => false);
+      Navigator.pop(context);
     } catch (e) {
       print(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,6 +125,31 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       completeProfile();
     }
 
+    PreferredSizeWidget topBar() {
+      return PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+            backgroundColor: backgroundPrimaryColor,
+            elevation: 0,
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 24,
+                  color: subtitleTextColor,
+                )),
+            title: Text(
+              'Update Profile',
+              style: secondaryTextStyle.copyWith(
+                fontWeight: bold,
+                fontSize: 16,
+              ),
+            )),
+      );
+    }
+
     Widget header() {
       return Text(
         'Help us to know more about you!',
@@ -129,20 +169,30 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                   color: secondaryColor,
                   borderRadius: BorderRadius.circular(50)),
               alignment: Alignment.center,
-              child: _imageFile == null
+              child: profilePicture == '' && _imageFile == null
                   ? const Icon(
                       Icons.person_add_alt_1,
                       size: 80,
                     )
-                  : ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.file(
-                        _imageFile!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                  : _imageFile == null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.network(
+                            profilePicture,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(50),
+                          child: Image.file(
+                            _imageFile!,
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
             ),
           ),
           const SizedBox(
@@ -267,6 +317,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     }
 
     return Scaffold(
+      appBar: topBar(),
       backgroundColor: backgroundPrimaryColor,
       resizeToAvoidBottomInset: false,
       body: SafeArea(

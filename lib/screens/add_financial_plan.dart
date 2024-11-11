@@ -22,6 +22,13 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
 
   bool isLoading = true;
 
+  @override
+  void dispose() {
+    titleController.dispose();
+    targetController.dispose();
+    super.dispose();
+  }
+
   Future<void> addFinancialPlan() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -126,6 +133,12 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
               hintText: 'New House',
               controller: titleController,
               padding: EdgeInsets.zero,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'This field cannot be empty';
+                }
+                return null;
+              },
             ),
             const SizedBox(
               height: 32,
@@ -151,6 +164,12 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
               hintText: '1,000,000',
               controller: targetController,
               padding: EdgeInsets.zero,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'This field cannot be empty';
+                }
+                return null;
+              },
             ),
             const SizedBox(
               height: 32,
@@ -192,6 +211,12 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
                             : '',
                       ),
                       padding: EdgeInsets.zero,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'This field cannot be empty';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ),
@@ -218,7 +243,9 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
             CustomFilledButton(
               buttonText: 'Submit Plan',
               onPressed: () {
-                handleSubmit();
+                if (_formKey.currentState!.validate()) {
+                  handleSubmit();
+                }
               },
             )
           ],

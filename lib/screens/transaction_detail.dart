@@ -1,12 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_outlined_button.dart';
+import 'package:tofu/widgets/loading_screen.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   const TransactionDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    TransactionProvider transactionProvider =
+        Provider.of<TransactionProvider>(context, listen: false);
+
+    final Map<String, dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final String? transactionId = args['id'];
+
+    IconData transactionIcon = Icons.question_mark;
+
+    handleIcon(String category) {
+      switch (category) {
+        case 'Top Up':
+          transactionIcon = Icons.credit_card;
+          break;
+        case 'electricity':
+          transactionIcon = Icons.lightbulb;
+          break;
+        case 'salary':
+          transactionIcon = Icons.attach_money;
+          break;
+        case 'investment':
+          transactionIcon = Icons.show_chart;
+          break;
+        case 'grocery':
+          transactionIcon = Icons.shopping_cart;
+          break;
+        case 'business':
+          transactionIcon = Icons.business_center;
+          break;
+        case 'self-development':
+          transactionIcon = Icons.person;
+          break;
+        case 'enjoyments':
+          transactionIcon = Icons.tag_faces;
+          break;
+        default:
+          transactionIcon = Icons.question_mark;
+          break;
+      }
+    }
+
     PreferredSizeWidget topBar() {
       return PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -27,7 +71,7 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
-    Widget header() {
+    Widget header(Map<String, dynamic> transaction) {
       return Column(
         children: [
           Container(
@@ -37,7 +81,7 @@ class TransactionDetailScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(defaultRadius),
             ),
             child: Icon(
-              Icons.lightbulb,
+              transactionIcon,
               color: primaryColor,
               size: 60,
             ),
@@ -46,7 +90,7 @@ class TransactionDetailScreen extends StatelessWidget {
             height: 16,
           ),
           Text(
-            '\$350',
+            '\$${transaction['amount']}',
             style: secondaryTextStyle.copyWith(
               fontWeight: bold,
               fontSize: 16,
@@ -56,7 +100,7 @@ class TransactionDetailScreen extends StatelessWidget {
             height: 8,
           ),
           Text(
-            'Transfer to receiver',
+            '${transaction['category']}',
             style: secondaryTextStyle.copyWith(
               fontWeight: semibold,
               fontSize: 14,
@@ -66,7 +110,7 @@ class TransactionDetailScreen extends StatelessWidget {
             height: 4,
           ),
           Text(
-            'VISA 12345678',
+            '${transaction['method']} ${transaction['methodAccountNumber']}',
             style: subtitleTextStyle.copyWith(
               fontSize: 14,
             ),
@@ -75,7 +119,7 @@ class TransactionDetailScreen extends StatelessWidget {
       );
     }
 
-    Widget details() {
+    Widget details(Map<String, dynamic> transaction) {
       return Column(
         children: [
           Text(
@@ -102,7 +146,7 @@ class TransactionDetailScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                'Completed',
+                '${transaction['status']}',
                 style: primaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -118,7 +162,7 @@ class TransactionDetailScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                'VISA',
+                '${transaction['method']}',
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -168,7 +212,7 @@ class TransactionDetailScreen extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '1234567890',
+                    '${transaction['id']}',
                     style: secondaryTextStyle.copyWith(fontSize: 14),
                   ),
                   const SizedBox(
@@ -203,7 +247,7 @@ class TransactionDetailScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$350',
+                '\$${transaction['amount']}',
                 style: secondaryTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: semibold,
@@ -227,17 +271,38 @@ class TransactionDetailScreen extends StatelessWidget {
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SafeArea(
-          child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            header(),
-            details(),
-            button(),
-          ],
-        ),
-      )),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: transactionProvider.fetchTransactionById(transactionId!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingScreen();
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return Center(
+              child: Text('Transaction not found'),
+            );
+          } else {
+            final transaction = snapshot.data!;
+            return SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      header(transaction),
+                      details(transaction),
+                      button(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

@@ -212,6 +212,7 @@ class _AddConnectedAccountsScreenState
               labelText: 'Insert your account number',
               hintText: 'Account Number',
               controller: accountNumberController,
+              keyboardType: TextInputType.number,
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Please enter an account number';

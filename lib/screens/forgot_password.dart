@@ -16,7 +16,38 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    PreferredSizeWidget topBar() {
+      return PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+            backgroundColor: backgroundPrimaryColor,
+            elevation: 0,
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  size: 24,
+                  color: subtitleTextColor,
+                )),
+            title: Text(
+              'Forgot Password',
+              style: secondaryTextStyle.copyWith(
+                fontWeight: bold,
+                fontSize: 16,
+              ),
+            )),
+      );
+    }
+
     Widget header() {
       return Column(
         children: [
@@ -45,6 +76,42 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               labelText: 'Email Address',
               hintText: 'johndoe@gmail.com',
               controller: emailController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'This field cannot be empty';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/signin',
+                          (_) => false,
+                        );
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                        backgroundColor: tertiaryColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(defaultRadius)),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16)),
+                    child: Text(
+                      'Send me an email',
+                      style: secondaryTextStyle.copyWith(fontWeight: semibold),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -84,10 +151,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
 
     return Scaffold(
+      appBar: topBar(),
       backgroundColor: backgroundPrimaryColor,
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-          child: Padding(
+      body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -97,13 +164,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               height: 8,
             ),
             inputFields(),
-            const SizedBox(
-              height: 16,
-            ),
-            buttons()
           ],
         ),
-      )),
+      ),
     );
   }
 }

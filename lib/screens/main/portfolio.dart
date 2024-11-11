@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:tofu/providers/connected_accounts_provider.dart';
+import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/income_pie_chart.dart';
@@ -124,7 +125,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       return Container(
         margin: EdgeInsets.only(bottom: 16),
         padding: EdgeInsets.all(16),
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         child: Column(
           children: [
             Text(
@@ -151,7 +155,19 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 )
               ],
             ),
-            IncomePieChart(),
+            Consumer<TransactionProvider>(builder: (context, provider, child) {
+              if (provider.isLoading) {
+                return Skeletonizer(
+                    enabled: true,
+                    child: SizedBox(
+                      width: 100,
+                      height: 100,
+                    ));
+              }
+              return IncomePieChart(
+                transactionData: provider.getLifetimeSummary(),
+              );
+            }),
           ],
         ),
       );
@@ -160,7 +176,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     Widget outcomeStream() {
       return Container(
         padding: EdgeInsets.all(16),
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         child: Column(
           children: [
             Text(
@@ -187,7 +206,19 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 )
               ],
             ),
-            OutcomePieChart(),
+            Consumer<TransactionProvider>(builder: (context, provider, child) {
+              if (provider.isLoading) {
+                return Skeletonizer(
+                    enabled: true,
+                    child: SizedBox(
+                      width: 100,
+                      height: 100,
+                    ));
+              }
+              return OutcomePieChart(
+                transactionData: provider.getLifetimeSummary(),
+              );
+            }),
           ],
         ),
       );

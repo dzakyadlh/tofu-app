@@ -4,6 +4,7 @@ import 'package:tofu/theme.dart';
 class TransactionCard extends StatelessWidget {
   const TransactionCard({
     super.key,
+    required this.id,
     required this.title,
     required this.date,
     required this.amount,
@@ -11,6 +12,7 @@ class TransactionCard extends StatelessWidget {
     required this.isOutcome,
   });
 
+  final String id;
   final String title;
   final String date;
   final int amount;
@@ -52,7 +54,8 @@ class TransactionCard extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, '/transaction-detail');
+        Navigator.pushNamed(context, '/transaction-detail',
+            arguments: {'id': id});
       },
       child: Container(
         padding: const EdgeInsets.all(8),

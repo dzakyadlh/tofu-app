@@ -47,6 +47,11 @@ class HomeScreen extends StatelessWidget {
                 return Consumer<ConnectedAccountsProvider>(
                     builder: (context, connectedAccountProvider, child) {
                   return Skeletonizer(
+                    effect: ShimmerEffect(
+                      baseColor: Colors.white24,
+                      highlightColor: Colors.white24,
+                      duration: Duration(seconds: 1),
+                    ),
                     enabled: userProvider.isLoading ||
                             connectedAccountProvider.isLoading
                         ? true
@@ -217,7 +222,11 @@ class HomeScreen extends StatelessWidget {
     Widget skeletonList() {
       return Skeletonizer(
         enabled: false,
-        effect: const ShimmerEffect(),
+        effect: ShimmerEffect(
+          baseColor: Colors.white24,
+          highlightColor: Colors.white24,
+          duration: Duration(seconds: 1),
+        ),
         child: Container(
           width: double.infinity,
           color: backgroundPrimaryColor,
@@ -273,7 +282,10 @@ class HomeScreen extends StatelessWidget {
     Widget financialPlansList(List<Map<String, dynamic>> financialPlans) {
       return Container(
         width: double.infinity,
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -365,7 +377,10 @@ class HomeScreen extends StatelessWidget {
 
     Widget transactionList(List<Map<String, dynamic>> transactions) {
       return Container(
-        color: backgroundPrimaryColor,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(defaultRadius),
+          color: backgroundPrimaryColor,
+        ),
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Column(
@@ -384,6 +399,7 @@ class HomeScreen extends StatelessWidget {
               // Generate cards for the first two financial plans
               if (transactions.isNotEmpty)
                 TransactionCard(
+                  id: transactions[0]['id'],
                   title: transactions[0]['title'],
                   date: DateFormat('d MMM yyyy h:mm a')
                       .format(transactions[0]['date']),
@@ -393,6 +409,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               if (transactions.length > 1)
                 TransactionCard(
+                  id: transactions[1]['id'],
                   title: transactions[1]['title'],
                   date: DateFormat('d MMM yyyy h:mm a')
                       .format(transactions[1]['date']),
@@ -402,6 +419,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               if (transactions.length > 2)
                 TransactionCard(
+                  id: transactions[2]['id'],
                   title: transactions[2]['title'],
                   date: DateFormat('d MMM yyyy h:mm a')
                       .format(transactions[2]['date']),
@@ -411,6 +429,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               if (transactions.length > 3)
                 TransactionCard(
+                  id: transactions[3]['id'],
                   title: transactions[3]['title'],
                   date: DateFormat('d MMM yyyy h:mm a')
                       .format(transactions[3]['date']),

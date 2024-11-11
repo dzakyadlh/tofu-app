@@ -35,9 +35,11 @@ class TransactionProvider with ChangeNotifier {
           .collection('transactions')
           .where('date', isGreaterThanOrEqualTo: startOfYear)
           .where('date', isLessThan: endOfYear)
+          .orderBy('date', descending: true)
           .snapshots()
           .listen((snapshot) {
         _transactions = snapshot.docs.map((doc) {
+          String transactionId = doc.id;
           String title = doc['title'];
           DateTime date = (doc['date'] as Timestamp).toDate();
           int amount = doc['amount'];
@@ -45,6 +47,7 @@ class TransactionProvider with ChangeNotifier {
           bool isOutcome = doc['isOutcome'];
 
           return {
+            'id': transactionId,
             'title': title,
             'date': date,
             'amount': amount,
@@ -57,6 +60,44 @@ class TransactionProvider with ChangeNotifier {
       });
     } catch (e) {
       print("Error fetching transactions: ${e.toString()}");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> fetchTransactionById(
+      String transactionId) async {
+    final uid = _firebaseAuth.currentUser?.uid;
+    if (uid == null) return null;
+
+    try {
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('transactions')
+          .doc(transactionId)
+          .get();
+
+      if (doc.exists) {
+        String title = doc['title'];
+        DateTime date = (doc['date'] as Timestamp).toDate();
+        int amount = doc['amount'];
+        String category = doc['category'];
+        bool isOutcome = doc['isOutcome'];
+
+        return {
+          'id': doc.id,
+          'title': title,
+          'date': date,
+          'amount': amount,
+          'category': category,
+          'isOutcome': isOutcome
+        };
+      } else {
+        print("Transaction with ID $transactionId not found.");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching transaction by ID: ${e.toString()}");
       rethrow;
     }
   }
@@ -121,5 +162,32 @@ class TransactionProvider with ChangeNotifier {
     return {
       'monthlySummary': monthlySummary,
     };
+  }
+
+  Map<String, Map<String, double>> getLifetimeSummary() {
+    // Initialize an empty map to store category-wise income and outcome totals.
+    Map<String, Map<String, double>> categorySummary = {};
+
+    for (var transaction in _transactions) {
+      String category = transaction['category'];
+      double amount = transaction['amount'].toDouble();
+      bool isOutcome = transaction['isOutcome'];
+
+      // If the category doesn't exist in the map, initialize it.
+      if (!categorySummary.containsKey(category)) {
+        categorySummary[category] = {'income': 0, 'outcome': 0};
+      }
+
+      // Update the category totals
+      if (isOutcome) {
+        categorySummary[category]!['outcome'] =
+            (categorySummary[category]!['outcome'] ?? 0) + amount;
+      } else {
+        categorySummary[category]!['income'] =
+            (categorySummary[category]!['income'] ?? 0) + amount;
+      }
+    }
+
+    return categorySummary;
   }
 }

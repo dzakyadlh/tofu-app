@@ -28,6 +28,7 @@ import 'package:tofu/screens/transaction_detail.dart';
 import 'package:tofu/screens/transaction_success.dart';
 import 'package:tofu/screens/transactions.dart';
 import 'package:tofu/screens/transfer_checkout.dart';
+import 'package:tofu/screens/update_profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
           '/transaction-success': (context) => const TransactionSuccessScreen(),
           '/top-up': (context) => const TopUpScreen(),
           '/add-connected-account': (context) => AddConnectedAccountsScreen(),
+          '/update-profile': (context) => UpdateProfileScreen(),
         },
       ),
     );

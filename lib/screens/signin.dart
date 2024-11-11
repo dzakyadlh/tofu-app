@@ -80,6 +80,8 @@ class _SigninScreenState extends State<SigninScreen> {
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Password cannot be empty';
+                } else if (value.length < 8) {
+                  return 'Password must be at least 8 characters';
                 }
                 return null;
               },
@@ -96,64 +98,68 @@ class _SigninScreenState extends State<SigninScreen> {
                       style: infoTextStyle.copyWith(fontSize: 12),
                     )),
               ],
-            )
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            handleSignIn();
+                          }
+                        },
+                        style: FilledButton.styleFrom(
+                            backgroundColor: tertiaryColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(defaultRadius)),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16)),
+                        child: Text(
+                          'Sign In',
+                          style:
+                              secondaryTextStyle.copyWith(fontWeight: semibold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/signup');
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(defaultRadius)),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
+                          side: BorderSide(width: 1.0, color: tertiaryColor),
+                        ),
+                        child: Text(
+                          'Create an account',
+                          style:
+                              secondaryTextStyle.copyWith(fontWeight: semibold),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ],
         ),
-      );
-    }
-
-    Widget buttons() {
-      return Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      handleSignIn();
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                      backgroundColor: tertiaryColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(defaultRadius)),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16)),
-                  child: Text(
-                    'Sign In',
-                    style: secondaryTextStyle.copyWith(fontWeight: semibold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/signup');
-                  },
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(defaultRadius)),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    side: BorderSide(width: 1.0, color: tertiaryColor),
-                  ),
-                  child: Text(
-                    'Create an account',
-                    style: secondaryTextStyle.copyWith(fontWeight: semibold),
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
       );
     }
 
@@ -167,10 +173,6 @@ class _SigninScreenState extends State<SigninScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             inputFields(),
-            const SizedBox(
-              height: 16,
-            ),
-            buttons()
           ],
         ),
       )),

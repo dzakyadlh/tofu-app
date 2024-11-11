@@ -15,10 +15,25 @@ class TopUpScreen extends StatefulWidget {
 }
 
 class _TopUpScreenState extends State<TopUpScreen> {
-  int selectedMethod = 0;
-  Map<String, dynamic> selectedMethodData = {};
+  late int selectedMethod;
+  late Map<String, dynamic> selectedMethodData;
   final amountController = IntegerTextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedMethod = 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider =
+          Provider.of<ConnectedAccountsProvider>(context, listen: false);
+      if (provider.connectedAccounts.isNotEmpty) {
+        setState(() {
+          selectedMethodData = provider.connectedAccounts[0];
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -77,9 +92,21 @@ class _TopUpScreenState extends State<TopUpScreen> {
           Consumer<ConnectedAccountsProvider>(
               builder: (context, provider, child) {
             if (provider.connectedAccounts.isEmpty) {
-              return Text(
-                'No connected accounts',
-                style: secondaryTextStyle.copyWith(fontSize: 14),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'No connected accounts',
+                    style: secondaryTextStyle.copyWith(fontSize: 14),
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    'Connect an account or top up directly using other providers',
+                    style: subtitleTextStyle.copyWith(fontSize: 12),
+                  ),
+                ],
               );
             }
             return ListView.builder(
@@ -87,9 +114,6 @@ class _TopUpScreenState extends State<TopUpScreen> {
               itemCount: provider.connectedAccounts.length,
               itemBuilder: (context, index) {
                 final account = provider.connectedAccounts[index];
-                if (index == 0) {
-                  selectedMethodData = account;
-                }
                 return ConnectedAccountCard(
                   name: account['name'],
                   balance: account['balance'],
@@ -99,7 +123,8 @@ class _TopUpScreenState extends State<TopUpScreen> {
                   onChanged: (int? newValue) {
                     setState(() {
                       selectedMethod = newValue ?? 0;
-                      selectedMethodData = account;
+                      selectedMethodData =
+                          provider.connectedAccounts[selectedMethod];
                     });
                   },
                 );

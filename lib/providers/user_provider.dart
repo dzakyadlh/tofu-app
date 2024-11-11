@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:tofu/utils/pin_encryption.dart';
 
@@ -36,10 +39,10 @@ class UserProvider with ChangeNotifier {
         _user = {
           'email': doc['email'] ?? '',
           'name': doc['name'] ?? '',
-          'birthDate':
-              '${(doc['birthDate'] as Timestamp).toDate().day}-${(doc['birthDate'] as Timestamp).toDate().month}-${(doc['birthDate'] as Timestamp).toDate().year}',
+          'birthDate': (doc['birthDate'] as Timestamp).toDate(),
           'occupation': doc['occupation'] ?? '',
           'phoneNumber': doc['phoneNumber'] ?? '',
+          'profilePicture': doc['profilePicture'] ?? '',
           // Adding wallet data
           'wallet': {
             'balance': walletData['balance'] ?? 0,
@@ -51,6 +54,35 @@ class UserProvider with ChangeNotifier {
       }
     } catch (e) {
       print(e.toString());
+      rethrow;
+    }
+  }
+
+  Future<void> uploadProfilePicture(File image) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw Exception('Not authenticated');
+    }
+
+    try {
+      // Upload to Firebase Storage
+      final storageRef = FirebaseStorage.instance.ref();
+      final profilePicRef =
+          storageRef.child('profile_pictures/${user.uid}.jpg');
+      await profilePicRef.putFile(image);
+
+      // Get the download URL
+      final downloadUrl = await profilePicRef.getDownloadURL();
+
+      // Update Firestore with the new profile picture URL
+      await _firestore.collection('users').doc(user.uid).update({
+        'profilePicture': downloadUrl,
+      });
+
+      // Fetch updated user data
+      await fetchUserData();
+    } catch (e) {
+      print("Error uploading profile picture: ${e.toString()}");
       rethrow;
     }
   }
