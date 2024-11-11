@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +76,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         occupationController.text,
         phoneNumberController.text,
       );
+
       Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (_) => false);
     } catch (e) {
       print(e.toString());
@@ -224,6 +227,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               labelText: 'What is Your Phone Number?',
               hintText: 'XXXX-XXXX-XXXX',
               controller: phoneNumberController,
+              keyboardType: TextInputType.phone,
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'This field cannot be empty';

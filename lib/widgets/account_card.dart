@@ -4,13 +4,11 @@ import 'package:tofu/theme.dart';
 class AccountCard extends StatelessWidget {
   const AccountCard({
     super.key,
-    required this.name,
-    required this.accountId,
+    required this.accountNumber,
     required this.onPressed,
   });
 
-  final String name;
-  final String accountId;
+  final String accountNumber;
   final void Function()? onPressed;
 
   @override
@@ -26,28 +24,15 @@ class AccountCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/defaultpp.png'),
+                    fit: BoxFit.cover),
                 borderRadius: BorderRadius.circular(50),
-                color: subtitleTextColor,
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: secondaryTextStyle.copyWith(
-                    fontSize: 14,
-                    fontWeight: semibold,
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  accountId,
-                  style: subtitleTextStyle.copyWith(fontSize: 12),
-                )
-              ],
+            Text(
+              accountNumber,
+              style: subtitleTextStyle.copyWith(fontSize: 14),
             )
           ],
         ),

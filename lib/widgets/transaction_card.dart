@@ -29,6 +29,9 @@ class TransactionCard extends StatelessWidget {
       case 'electricity':
         transactionIcon = Icons.lightbulb;
         break;
+      case 'payment':
+        transactionIcon = Icons.payment;
+        break;
       case 'salary':
         transactionIcon = Icons.attach_money;
         break;

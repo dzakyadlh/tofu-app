@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/transaction_provider.dart';
 import 'package:tofu/theme.dart';
@@ -17,37 +18,27 @@ class TransactionDetailScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final String? transactionId = args['id'];
 
-    IconData transactionIcon = Icons.question_mark;
-
-    handleIcon(String category) {
-      switch (category) {
-        case 'Top Up':
-          transactionIcon = Icons.credit_card;
-          break;
-        case 'electricity':
-          transactionIcon = Icons.lightbulb;
-          break;
-        case 'salary':
-          transactionIcon = Icons.attach_money;
-          break;
-        case 'investment':
-          transactionIcon = Icons.show_chart;
-          break;
-        case 'grocery':
-          transactionIcon = Icons.shopping_cart;
-          break;
-        case 'business':
-          transactionIcon = Icons.business_center;
-          break;
-        case 'self-development':
-          transactionIcon = Icons.person;
-          break;
-        case 'enjoyments':
-          transactionIcon = Icons.tag_faces;
-          break;
-        default:
-          transactionIcon = Icons.question_mark;
-          break;
+    IconData handleIcon(String category) {
+      if (category == 'Top Up') {
+        return Icons.credit_card;
+      } else if (category == 'electricity') {
+        return Icons.lightbulb;
+      } else if (category == 'payment') {
+        return Icons.payment;
+      } else if (category == 'salary') {
+        return Icons.attach_money;
+      } else if (category == 'investment') {
+        return Icons.show_chart;
+      } else if (category == 'grocery') {
+        return Icons.shopping_cart;
+      } else if (category == 'business') {
+        return Icons.business_center;
+      } else if (category == 'self-development') {
+        return Icons.person;
+      } else if (category == 'enjoyments') {
+        return Icons.tag_faces;
+      } else {
+        return Icons.question_mark;
       }
     }
 
@@ -75,15 +66,15 @@ class TransactionDetailScreen extends StatelessWidget {
       return Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white12,
               borderRadius: BorderRadius.circular(defaultRadius),
             ),
             child: Icon(
-              transactionIcon,
+              handleIcon(transaction['category']),
               color: primaryColor,
-              size: 60,
+              size: 48,
             ),
           ),
           const SizedBox(
@@ -110,7 +101,7 @@ class TransactionDetailScreen extends StatelessWidget {
             height: 4,
           ),
           Text(
-            '${transaction['method']} ${transaction['methodAccountNumber']}',
+            '${transaction['method']['type']} ${transaction['method']['accountNumber']}',
             style: subtitleTextStyle.copyWith(
               fontSize: 14,
             ),
@@ -121,22 +112,23 @@ class TransactionDetailScreen extends StatelessWidget {
 
     Widget details(Map<String, dynamic> transaction) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Transaction Detail',
             style: secondaryTextStyle.copyWith(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: semibold,
             ),
           ),
           const SizedBox(
-            height: 16,
+            height: 8,
           ),
           const Divider(
             color: Colors.white12,
           ),
           const SizedBox(
-            height: 16,
+            height: 8,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -162,7 +154,7 @@ class TransactionDetailScreen extends StatelessWidget {
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
               Text(
-                '${transaction['method']}',
+                '${transaction['method']['type']}',
                 style: secondaryTextStyle.copyWith(fontSize: 14),
               ),
             ],
@@ -213,16 +205,27 @@ class TransactionDetailScreen extends StatelessWidget {
                 children: [
                   Text(
                     '${transaction['id']}',
-                    style: secondaryTextStyle.copyWith(fontSize: 14),
+                    style: subtitleTextStyle.copyWith(fontSize: 12),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
-                  Icon(
-                    Icons.copy,
-                    size: 16,
-                    color: subtitleTextColor,
-                  )
+                  InkWell(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: transaction['id']));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Transaction ID copied to clipboard'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.copy,
+                      size: 16,
+                      color: subtitleTextColor,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -293,6 +296,9 @@ class TransactionDetailScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       header(transaction),
+                      SizedBox(
+                        height: 24,
+                      ),
                       details(transaction),
                       button(),
                     ],

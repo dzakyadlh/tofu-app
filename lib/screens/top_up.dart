@@ -89,6 +89,9 @@ class _TopUpScreenState extends State<TopUpScreen> {
             'Select a method',
             style: subtitleTextStyle.copyWith(fontSize: 14),
           ),
+          SizedBox(
+            height: 8,
+          ),
           Consumer<ConnectedAccountsProvider>(
               builder: (context, provider, child) {
             if (provider.connectedAccounts.isEmpty) {

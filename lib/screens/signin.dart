@@ -64,6 +64,7 @@ class _SigninScreenState extends State<SigninScreen> {
               hintText: 'johndoe@gmail.com',
               controller: emailController,
               isObscureText: false,
+              keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Email address cannot be empty';

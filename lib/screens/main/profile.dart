@@ -45,14 +45,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image:
-                                  NetworkImage(provider.user['profilePicture']),
+                              image: (provider.user['profilePicture'] != null &&
+                                      provider
+                                          .user['profilePicture'].isNotEmpty)
+                                  ? NetworkImage(
+                                      provider.user['profilePicture'])
+                                  : const AssetImage(
+                                          'assets/images/defaultpp.png')
+                                      as ImageProvider,
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                       Text(
-                        'Hello, ${provider.user['name']}',
+                        provider.isLoading
+                            ? 'sample text'
+                            : 'Hello, ${provider.user['name']}',
                         style: primaryTextStyle.copyWith(
                           fontSize: 20,
                           fontWeight: semibold,
@@ -125,7 +133,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: secondaryTextStyle.copyWith(fontSize: 14),
                           ),
                           Text(
-                            '${provider.user['name']}',
+                            provider.isLoading
+                                ? 'sample text'
+                                : '${provider.user['name']}',
                             style: subtitleTextStyle.copyWith(fontSize: 14),
                           )
                         ],
@@ -141,8 +151,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: secondaryTextStyle.copyWith(fontSize: 14),
                           ),
                           Text(
-                            DateFormat('d MMM yyyy')
-                                .format(provider.user['birthDate']),
+                            provider.isLoading
+                                ? 'sample text'
+                                : DateFormat('d MMM yyyy')
+                                    .format(provider.user['birthDate']),
                             style: subtitleTextStyle.copyWith(fontSize: 14),
                           )
                         ],
@@ -158,7 +170,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: secondaryTextStyle.copyWith(fontSize: 14),
                           ),
                           Text(
-                            '${provider.user['occupation']}',
+                            provider.isLoading
+                                ? 'sample text'
+                                : '${provider.user['occupation']}',
                             style: subtitleTextStyle.copyWith(fontSize: 14),
                           )
                         ],
@@ -174,7 +188,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: secondaryTextStyle.copyWith(fontSize: 14),
                           ),
                           Text(
-                            '${provider.user['phoneNumber']}',
+                            provider.isLoading
+                                ? 'sample text'
+                                : '${provider.user['phoneNumber']}',
                             style: subtitleTextStyle.copyWith(fontSize: 14),
                           )
                         ],
@@ -217,7 +233,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return Skeletonizer(
                   enabled: provider.isLoading,
                   child: Text(
-                    '${provider.user['wallet']?['balance'] ?? 0}',
+                    provider.isLoading
+                        ? 'sample text'
+                        : '${provider.user['wallet']?['balance'] ?? 0}',
                     style: secondaryTextStyle.copyWith(
                         fontSize: 20, fontWeight: bold),
                   ));
@@ -317,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 16,
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {},
               child: Row(
                 children: [
@@ -339,7 +357,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 16,
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {},
               child: Row(
                 children: [
@@ -361,7 +379,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 16,
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {},
               child: Row(
                 children: [
@@ -383,7 +401,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 16,
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {},
               child: Row(
                 children: [

@@ -58,6 +58,42 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>?> fetchUserDataByPhoneNumber(
+      String phoneNumber) async {
+    final uid = _firebaseAuth.currentUser?.uid;
+    if (uid == null) return null;
+
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final doc = snapshot.docs.first.data() as Map<String, dynamic>;
+
+        Map<String, dynamic> walletData =
+            doc['wallet'] is Map<String, dynamic> ? doc['wallet'] : {};
+        return {
+          'email': doc['email'] ?? '',
+          'name': doc['name'] ?? '',
+          'phoneNumber': doc['phoneNumber'] ?? '',
+          'profilePicture': doc['profilePicture'] ?? '',
+          'wallet': {
+            'balance': walletData['balance'] ?? 0,
+          },
+        };
+      } else {
+        print("No user found with this phone number.");
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching user by phone number: ${e.toString()}");
+      rethrow;
+    }
+  }
+
   Future<void> uploadProfilePicture(File image) async {
     final user = _firebaseAuth.currentUser;
     if (user == null) {

@@ -44,6 +44,7 @@ class TransactionProvider with ChangeNotifier {
           DateTime date = (doc['date'] as Timestamp).toDate();
           int amount = doc['amount'];
           String category = doc['category'];
+          Map<String, dynamic> receiver = doc['receiver'];
           bool isOutcome = doc['isOutcome'];
 
           return {
@@ -52,6 +53,7 @@ class TransactionProvider with ChangeNotifier {
             'date': date,
             'amount': amount,
             'category': category,
+            'receiver': receiver,
             'isOutcome': isOutcome
           };
         }).toList();
@@ -82,6 +84,9 @@ class TransactionProvider with ChangeNotifier {
         DateTime date = (doc['date'] as Timestamp).toDate();
         int amount = doc['amount'];
         String category = doc['category'];
+        Map<String, dynamic> method = doc['method'];
+        Map<String, dynamic> receiver = doc['receiver'];
+        String status = doc['status'];
         bool isOutcome = doc['isOutcome'];
 
         return {
@@ -90,6 +95,9 @@ class TransactionProvider with ChangeNotifier {
           'date': date,
           'amount': amount,
           'category': category,
+          'method': method,
+          'receiver': receiver,
+          'status': status,
           'isOutcome': isOutcome
         };
       } else {
@@ -108,7 +116,7 @@ class TransactionProvider with ChangeNotifier {
     int amount,
     String category,
     String status,
-    String method,
+    Map<String, dynamic> method,
     Map<String, dynamic> receiver,
     bool isOutcome,
   ) async {

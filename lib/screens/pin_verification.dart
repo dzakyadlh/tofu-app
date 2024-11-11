@@ -63,7 +63,10 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
               transactionAmount,
               transactionType,
               'Completed',
-              connectedAccount!['name'],
+              {
+                'type': connectedAccount!['name'],
+                'accountNumber': connectedAccount['accountNumber'],
+              },
               {
                 'type': 'Tofu Wallet',
                 'accountNumber': userProvider.user['phoneNumber'],

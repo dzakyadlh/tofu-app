@@ -13,6 +13,7 @@ class CustomInputField extends StatefulWidget {
     this.obscureButton = false,
     this.padding = const EdgeInsets.only(top: 20),
     this.keyboardType = TextInputType.text,
+    this.onSubmitted,
   });
 
   final String labelText;
@@ -24,6 +25,7 @@ class CustomInputField extends StatefulWidget {
   final bool obscureButton;
   final EdgeInsetsGeometry padding;
   final TextInputType keyboardType;
+  final void Function(String)? onSubmitted;
 
   @override
   State<CustomInputField> createState() => _CustomInputFieldState();
@@ -97,6 +99,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
             ),
             validator: widget.validator,
             keyboardType: widget.keyboardType,
+            onFieldSubmitted: (value) {},
           )
         ],
       ),

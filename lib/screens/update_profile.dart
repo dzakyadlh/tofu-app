@@ -319,29 +319,30 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     return Scaffold(
       appBar: topBar(),
       backgroundColor: backgroundPrimaryColor,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            header(),
-            const SizedBox(
-              height: 32,
-            ),
-            profilePictureField(),
-            const SizedBox(
-              height: 16,
-            ),
-            inputFields(),
-            const SizedBox(
-              height: 32,
-            ),
-            buttons()
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              header(),
+              const SizedBox(
+                height: 32,
+              ),
+              profilePictureField(),
+              const SizedBox(
+                height: 16,
+              ),
+              inputFields(),
+              const SizedBox(
+                height: 32,
+              ),
+              buttons()
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }

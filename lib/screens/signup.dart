@@ -35,23 +35,12 @@ class _SignupScreenState extends State<SignupScreen> {
       setState(() {
         isLoading = true;
       });
-      try {
-        await authProvider.signUp(
-            emailController.text, passwordController.text);
-        if (authProvider.isAuthenticated) {
-          isLoading = false;
-          Navigator.pushNamedAndRemoveUntil(
-              context, '/complete-profile', (_) => false);
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-          'Sign Up Failed: $e',
-          style: alertTextStyle.copyWith(
-            fontWeight: semibold,
-            fontSize: 14,
-          ),
-        )));
+
+      await authProvider.signUp(emailController.text, passwordController.text);
+      if (authProvider.isAuthenticated) {
+        isLoading = false;
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/complete-profile', (_) => false);
       }
     }
 
@@ -65,6 +54,7 @@ class _SignupScreenState extends State<SignupScreen> {
               hintText: 'johndoe@gmail.com',
               controller: emailController,
               isObscureText: false,
+              keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value!.isEmpty) {
                   return 'Email address cannot be empty';

@@ -76,6 +76,7 @@ flutter:
     - assets/images/amazon.png
     - assets/images/despair.png
     - assets/images/sadcat.png
+    - assets/images/defaultpp.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
