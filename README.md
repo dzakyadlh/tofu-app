@@ -102,18 +102,16 @@ users (collection)
 - Option to view financial transactions and plans.
 - Allows users to transfer funds or top-up their wallet.
 
-||||
-|:----------------------------------------:|:-----------------------------------------:|
-| ![home_screen](assets/documentation/home1.png) | ![home_screen](assets/documentation/home2.jpeg) |
+| ![home_screen_1](assets/documentation/home1.png) | ![home_screen_2](assets/documentation/home2.jpeg) |
+|--------------------------------------------------|----------------------------------------------------|
 
 ### 2. **Portfolio Screen**
 
 - Displays the user's financial growth chart.
 - Pie charts showing the breakdown of income and expenses.
 
-||||
-|:----------------------------------------:|:-----------------------------------------:|
-| ![portfolio_screen](assets/documentation/portfolio1.png) | ![portfolio_screen](assets/documentation/portfolio2.png) |
+| ![portfolio_screen_1](assets/documentation/portfolio1.png) | ![portfolio_screen_2](assets/documentation/portfolio2.png) |
+|-------------------------------------------------------------|-----------------------------------------------------------|
 
 ### 3. **Profile Screen**
 
@@ -121,9 +119,8 @@ users (collection)
 - Option to update the profile and manage connected accounts.
 - Includes settings for app customization.
 
-||||
-|:----------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
-| ![profile_screen](assets/documentation/profile1.jpeg) | ![profile_screen](assets/documentation/profile2.jpeg) | ![profile_screen](assets/documentation/addaccountconnection.jpeg) |
+| ![profile_screen_1](assets/documentation/profile1.jpeg) | ![profile_screen_2](assets/documentation/profile2.jpeg) | ![profile_screen_add](assets/documentation/addaccountconnection.jpeg) |
+|----------------------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------------|
 
 ### 4. **Transactions Screen**
 
@@ -131,18 +128,16 @@ users (collection)
 - Users can filter and categorize their transactions.
 - Option to see detailed transaction breakdowns.
 
-||||
-|:----------------------------------------:|:-----------------------------------------:|
-| ![transaction_screen](assets/documentation/transactions.jpeg) | ![transaction_screen](assets/documentation/transactiondetail.jpeg) |
+| ![transaction_screen_1](assets/documentation/transactions.jpeg) | ![transaction_screen_2](assets/documentation/transactiondetail.jpeg) |
+|-----------------------------------------------------------------|--------------------------------------------------------------------|
 
 ### 5. **Financial Plans**
 
 - Users can create and view their financial plans.
 - Includes saving goals and budgeting features.
 
-||||
-|:----------------------------------------:|:-----------------------------------------:|
-| ![finplan_screen](assets/documentation/finplanlist.jpeg) | ![finplan_screen](assets/documentation/addfinplan.jpeg) |
+| ![finplan_screen_1](assets/documentation/finplanlist.jpeg) | ![finplan_screen_2](assets/documentation/addfinplan.jpeg) |
+|------------------------------------------------------------|----------------------------------------------------------|
 
 ### 6. **Transfer and Top-up**
 
@@ -150,10 +145,10 @@ users (collection)
 - Wallet balance can be topped up using connected accounts.
 - Includes pin verification for secure transactions.
 
-||||
-|:----------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
-| ![transfer_screen](assets/documentation/transfer.jpeg) | ![transfer_screen](assets/documentation/transfercheckout.jpeg) | ![topup_screen](assets/documentation/topup.jpeg) |
-| ![pin_verification_screen](assets/documentation/pin.jpeg) | ![pin_verification_screen](assets/documentation/insertpin.jpeg) | ![pin_verification_screen](assets/documentation/pinerror.jpeg) |
+| ![transfer_screen_1](assets/documentation/transfer.jpeg) | ![transfer_screen_2](assets/documentation/transfercheckout.jpeg) | ![topup_screen](assets/documentation/topup.jpeg) |
+|---------------------------------------------------------|-------------------------------------------------------------|--------------------------------------------------|
+| ![pin_verification_1](assets/documentation/pin.jpeg) | ![pin_verification_2](assets/documentation/insertpin.jpeg) | ![pin_verification_3](assets/documentation/pinerror.jpeg) |
+
 
 ## Contributing
 
