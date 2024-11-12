@@ -40,9 +40,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: List.generate(4, (index) {
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              width: 50,
-              height: 8,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              width: 16,
+              height: 16,
               decoration: BoxDecoration(
                 color: index == currentIndex ? primaryColor : Colors.grey,
                 borderRadius: BorderRadius.circular(4),
@@ -134,17 +134,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           }
         },
         child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: Padding(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(top: 32),
+            child: Column(
+              children: [
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child:
-                      contents(), // Content takes the remaining available space
+                  child: contents(), // Content takes the available space
                 ),
-              ),
-              bottomBar(), // Bottom bar stays at the bottom
-            ],
+                bottomBar(), // Bottom bar stays at the bottom
+              ],
+            ),
           ),
         ),
       ),

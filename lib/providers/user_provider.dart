@@ -53,7 +53,7 @@ class UserProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -87,11 +87,11 @@ class UserProvider with ChangeNotifier {
           },
         };
       } else {
-        print("No user found with this phone number.");
+        debugPrint("No user found with this phone number.");
         return null;
       }
     } catch (e) {
-      print("Error fetching user by phone number: ${e.toString()}");
+      debugPrint("Error fetching user by phone number: ${e.toString()}");
       rethrow;
     }
   }
@@ -120,7 +120,7 @@ class UserProvider with ChangeNotifier {
       // Fetch updated user data
       await fetchUserData();
     } catch (e) {
-      print("Error uploading profile picture: ${e.toString()}");
+      debugPrint("Error uploading profile picture: ${e.toString()}");
       rethrow;
     }
   }
@@ -148,7 +148,7 @@ class UserProvider with ChangeNotifier {
       await fetchUserData();
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -171,7 +171,7 @@ class UserProvider with ChangeNotifier {
       }, SetOptions(merge: true));
       await fetchUserData();
     } catch (e) {
-      print("Error creating wallet: ${e.toString()}");
+      debugPrint("Error creating wallet: ${e.toString()}");
       rethrow;
     }
   }
@@ -190,7 +190,7 @@ class UserProvider with ChangeNotifier {
       });
       await fetchUserData();
     } catch (e) {
-      print("Error updating wallet balance: ${e.toString()}");
+      debugPrint("Error updating wallet balance: ${e.toString()}");
       rethrow;
     }
   }
@@ -209,7 +209,7 @@ class UserProvider with ChangeNotifier {
       });
       await fetchUserData();
     } catch (e) {
-      print("Error setting wallet PIN: ${e.toString()}");
+      debugPrint("Error setting wallet PIN: ${e.toString()}");
       rethrow;
     }
   }

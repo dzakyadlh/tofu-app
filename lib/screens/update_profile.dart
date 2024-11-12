@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
@@ -58,9 +59,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     if (cameraPermission.isGranted && photoPermission.isGranted) {
       _pickImage();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Permission denied. Unable to pick image.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Permission denied. Unable to pick image.')),
+        );
+      }
     }
   }
 
@@ -71,12 +74,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         _imageFile = File(image.path);
       });
 
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.uploadProfilePicture(_imageFile!);
+      if (mounted) {
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.uploadProfilePicture(_imageFile!);
+      }
     }
   }
 
-  Future<void> completeProfile() async {
+  Future<void> updateProfile() async {
     UserProvider userProvider = Provider.of(context, listen: false);
 
     try {
@@ -89,12 +94,15 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         occupationController.text,
         phoneNumberController.text,
       );
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
-      print(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to complete profile: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update profile: ${e.toString()}')),
+        );
+      }
     } finally {
       if (mounted) {
         // Check if the widget is still mounted
@@ -121,8 +129,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    handleCompleteProfile() {
-      completeProfile();
+    handleUpdateProfile() {
+      updateProfile();
     }
 
     PreferredSizeWidget topBar() {
@@ -147,13 +155,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 fontSize: 16,
               ),
             )),
-      );
-    }
-
-    Widget header() {
-      return Text(
-        'Help us to know more about you!',
-        style: secondaryTextStyle.copyWith(fontWeight: semibold, fontSize: 20),
       );
     }
 
@@ -289,29 +290,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     Widget buttons() {
       return Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      handleCompleteProfile();
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                      backgroundColor: tertiaryColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(defaultRadius)),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16)),
-                  child: Text(
-                    'Done',
-                    style: secondaryTextStyle.copyWith(fontWeight: semibold),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          CustomFilledButton(
+              buttonText: 'Update my profile',
+              isLoading: isLoading,
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  handleUpdateProfile();
+                }
+              })
         ],
       );
     }
@@ -326,7 +312,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              header(),
               const SizedBox(
                 height: 32,
               ),

@@ -44,6 +44,7 @@ class _AddConnectedAccountsScreenState
 
   String? selectedValue;
   bool isError = false;
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -51,11 +52,35 @@ class _AddConnectedAccountsScreenState
     super.dispose();
   }
 
+  Future<void> connectAccount(Map<String, dynamic> account) async {
+    ConnectedAccountsProvider connectedAccountsProvider =
+        Provider.of(context, listen: false);
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await connectedAccountsProvider.addConnectedAccount(account);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to connect account: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    ConnectedAccountsProvider connectedAccountsProvider = Provider.of(context);
-
-    handleConnectAccount() async {
+    handleConnectAccount() {
       if (_formKey.currentState!.validate() && selectedValue != null) {
         // Only proceed if the form is valid and an account is selected
         Map<String, dynamic> accountData = {
@@ -66,8 +91,7 @@ class _AddConnectedAccountsScreenState
           'balance': 1000000, // Example balance
         };
 
-        await connectedAccountsProvider.addConnectedAccount(accountData);
-        Navigator.pop(context);
+        connectAccount(accountData);
       } else if (selectedValue == null) {
         setState(() {
           isError = true;
@@ -232,6 +256,7 @@ class _AddConnectedAccountsScreenState
         padding: const EdgeInsets.only(top: 32.0),
         child: CustomFilledButton(
             buttonText: 'Connect Account',
+            isLoading: isLoading,
             onPressed: () {
               handleConnectAccount();
             }),
@@ -243,16 +268,14 @@ class _AddConnectedAccountsScreenState
       resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                accountInput(),
-                submitButton(),
-              ],
-            ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              accountInput(),
+              submitButton(),
+            ],
           ),
         ),
       ),

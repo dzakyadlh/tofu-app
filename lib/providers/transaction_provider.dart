@@ -65,7 +65,7 @@ class TransactionProvider with ChangeNotifier {
         notifyListeners();
       });
     } catch (e) {
-      print("Error fetching transactions: ${e.toString()}");
+      debugPrint("Error fetching transactions: ${e.toString()}");
       rethrow;
     }
   }
@@ -100,7 +100,7 @@ class TransactionProvider with ChangeNotifier {
       });
       notifyListeners();
     } catch (e) {
-      print("Error adding transaction: ${e.toString()}");
+      debugPrint("Error adding transaction: ${e.toString()}");
       rethrow;
     }
   }
@@ -132,7 +132,7 @@ class TransactionProvider with ChangeNotifier {
       });
       notifyListeners();
     } catch (e) {
-      print("Error adding transaction: ${e.toString()}");
+      debugPrint("Error adding transaction: ${e.toString()}");
       rethrow;
     }
   }

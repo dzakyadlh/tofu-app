@@ -37,79 +37,72 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget miniPortolio() {
+    Widget miniPortolio(UserProvider userProvider,
+        ConnectedAccountsProvider connectedAccountProvider) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Consumer<UserProvider>(
-              builder: (context, userProvider, child) {
-                return Consumer<ConnectedAccountsProvider>(
-                    builder: (context, connectedAccountProvider, child) {
-                  return Skeletonizer(
-                    effect: ShimmerEffect(
-                      baseColor: Colors.white24,
-                      highlightColor: Colors.white24,
-                      duration: Duration(seconds: 1),
-                    ),
-                    enabled: userProvider.isLoading ||
-                            connectedAccountProvider.isLoading
-                        ? true
-                        : false,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Your Balance',
-                              style: secondaryTextStyle.copyWith(fontSize: 12),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  '\$',
-                                  style:
-                                      secondaryTextStyle.copyWith(fontSize: 16),
-                                ),
-                                userProvider.isLoading ||
-                                        connectedAccountProvider.isLoading
-                                    ? Text('123456789')
-                                    : Text(
-                                        '${userProvider.user['wallet']['balance'] + connectedAccountProvider.totalBalance}',
-                                        style: secondaryTextStyle.copyWith(
-                                            fontWeight: semibold, fontSize: 20),
-                                      )
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Last month yield',
-                              style: subtitleTextStyle.copyWith(fontSize: 12),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            Text(
-                              '+5.58%',
-                              style: primaryTextStyle.copyWith(fontSize: 12),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                });
-              },
+            Skeletonizer(
+              effect: ShimmerEffect(
+                baseColor: Colors.white24,
+                highlightColor: Colors.white24,
+                duration: Duration(seconds: 1),
+              ),
+              enabled:
+                  userProvider.isLoading || connectedAccountProvider.isLoading
+                      ? true
+                      : false,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Balance',
+                        style: secondaryTextStyle.copyWith(fontSize: 12),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '\$',
+                            style: secondaryTextStyle.copyWith(fontSize: 16),
+                          ),
+                          userProvider.isLoading ||
+                                  connectedAccountProvider.isLoading
+                              ? Text('123456789')
+                              : Text(
+                                  '${userProvider.user['wallet']['balance'] + connectedAccountProvider.totalBalance}',
+                                  style: secondaryTextStyle.copyWith(
+                                      fontWeight: semibold, fontSize: 20),
+                                )
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Last month growth',
+                        style: subtitleTextStyle.copyWith(fontSize: 12),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        '+5.58%',
+                        style: primaryTextStyle.copyWith(fontSize: 12),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
             const SizedBox(
               height: 16,
@@ -279,7 +272,23 @@ class HomeScreen extends StatelessWidget {
       );
     }
 
-    Widget financialPlansList(List<Map<String, dynamic>> financialPlans) {
+    Widget financialPlansList(List<Map<String, dynamic>> financialPlans,
+        Map<String, dynamic> user, int totalBalance) {
+      int currentBalance = user['wallet']['balance'] + totalBalance;
+      int monthlyTarget1 = 0;
+      int monthlyTarget2 = 0;
+      if (financialPlans.isNotEmpty) {
+        monthlyTarget1 = ((financialPlans[0]['target'] - currentBalance) /
+                financialPlans[0]['monthsRemaining'])
+            .round();
+        monthlyTarget1 < 0 ? monthlyTarget1 = 0 : monthlyTarget1;
+      }
+      if (financialPlans.length > 1) {
+        monthlyTarget2 = ((financialPlans[1]['target'] - currentBalance) /
+                financialPlans[1]['monthsRemaining'])
+            .round();
+        monthlyTarget2 < 0 ? monthlyTarget2 = 0 : monthlyTarget2;
+      }
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -306,7 +315,7 @@ class HomeScreen extends StatelessWidget {
                   title: financialPlans[0]['title'],
                   target: financialPlans[0]['target'],
                   timeRemaining: financialPlans[0]['timeRemaining'],
-                  monthlyTarget: financialPlans[0]['monthlyTarget'],
+                  monthlyTarget: monthlyTarget1,
                   onPressed: () {
                     Navigator.pushNamed(
                       context,
@@ -323,7 +332,7 @@ class HomeScreen extends StatelessWidget {
                   title: financialPlans[1]['title'],
                   target: financialPlans[1]['target'],
                   timeRemaining: financialPlans[1]['timeRemaining'],
-                  monthlyTarget: financialPlans[1]['monthlyTarget'],
+                  monthlyTarget: monthlyTarget2,
                   onPressed: () {
                     Navigator.pushNamed(
                       context,
@@ -480,54 +489,56 @@ class HomeScreen extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            color: backgroundPrimaryColor,
-            child: Column(
-              children: [
-                topBar(),
-                const SizedBox(
-                  height: 16,
+      child: Consumer4<FinancialPlanProvider, UserProvider,
+          ConnectedAccountsProvider, TransactionProvider>(
+        builder: (context, financialPlanProvider, userProvider,
+            connectedAccountsProvider, transactionProvider, child) {
+          return Column(
+            children: [
+              Container(
+                color: backgroundPrimaryColor,
+                child: Column(
+                  children: [
+                    topBar(),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    miniPortolio(userProvider, connectedAccountsProvider),
+                    const SizedBox(
+                      height: 32,
+                    ),
+                  ],
                 ),
-                miniPortolio(),
-                const SizedBox(
-                  height: 32,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    featuresMenu(),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    financialPlanProvider.isLoading ||
+                            userProvider.isLoading ||
+                            connectedAccountsProvider.isLoading
+                        ? skeletonList()
+                        : financialPlansList(
+                            financialPlanProvider.financialPlans,
+                            userProvider.user,
+                            connectedAccountsProvider.totalBalance,
+                          ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    transactionProvider.isLoading
+                        ? skeletonList()
+                        : transactionList(transactionProvider.transactions),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                featuresMenu(),
-                const SizedBox(
-                  height: 16,
-                ),
-                Consumer<FinancialPlanProvider>(
-                    builder: (context, provider, child) {
-                  if (provider.isLoading) {
-                    return skeletonList();
-                  }
-                  return financialPlansList(provider.financialPlans);
-                }),
-                const SizedBox(
-                  height: 16,
-                ),
-                Consumer<TransactionProvider>(
-                  builder: (context, provider, child) {
-                    if (provider.isLoading) {
-                      return skeletonList();
-                    }
-
-                    return transactionList(provider.transactions);
-                  },
-                ),
-              ],
-            ),
-          )
-        ],
+              )
+            ],
+          );
+        },
       ),
     );
   }

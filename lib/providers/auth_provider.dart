@@ -25,10 +25,10 @@ class AuthProvider with ChangeNotifier {
         password: password.trim(),
       );
       _user = userCredential.user;
-      print(user);
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
+      rethrow;
     }
   }
 
@@ -45,7 +45,7 @@ class AuthProvider with ChangeNotifier {
       });
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 

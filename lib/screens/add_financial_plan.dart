@@ -20,7 +20,7 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  bool isLoading = true;
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -43,13 +43,16 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
           targetController.integerValue!,
           selectedDeadline!,
         );
-        Navigator.pop(context);
+        if (mounted) {
+          Navigator.pop(context);
+        }
       } catch (e) {
-        print(e.toString());
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to load financial plans: ${e.toString()}')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Failed to add financial plan: ${e.toString()}')),
+          );
+        }
       } finally {
         if (mounted) {
           // Check if the widget is still mounted
@@ -243,6 +246,7 @@ class _AddFinancialPlanScreenState extends State<AddFinancialPlanScreen> {
               ),
               CustomFilledButton(
                 buttonText: 'Submit Plan',
+                isLoading: isLoading,
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     handleSubmit();

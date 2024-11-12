@@ -6,6 +6,7 @@ import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/providers/connected_accounts_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/utils/number_format.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,17 +16,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  @override
-  Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of(context);
-
-    handleSignOut() async {
+  Future<void> handleSignOut() async {
+    AuthProvider authProvider = Provider.of(context, listen: false);
+    try {
       await authProvider.signOut();
-      if (!authProvider.isAuthenticated) {
-        Navigator.pushNamedAndRemoveUntil(context, ('/landing'), (_) => false);
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to sign out: ${e.toString()}')),
+        );
       }
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     Widget header() {
       return Padding(
         padding: const EdgeInsets.all(16),
@@ -230,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'My Balance',
+              'Tofu Wallet Balance',
               style: primaryTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: semibold,
@@ -250,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Text(
                     provider.isLoading
                         ? 'sample text'
-                        : '${provider.user['wallet']?['balance'] ?? 0}',
+                        : '\$${formatWithComma(provider.user['wallet']?['balance'])}',
                     style: secondaryTextStyle.copyWith(
                         fontSize: 20, fontWeight: bold),
                   ));

@@ -1,3 +1,5 @@
+![logo]('assets/images/tofu.png')
+
 # Tofu: Grow Your Wealth
 
 **Tofu** (short for **Tomi o Fuyasu**, Japanese for "grow wealth") is a financial planner app designed to help users manage and grow their wealth. The app features a simple, intuitive interface to track your financial transactions, connect to various accounts, set financial goals, and analyze your income and expenses using charts.
@@ -7,10 +9,10 @@
 - **Tofu Wallet**: A built-in wallet for storing and tracking transactions.
 - **Account Connections**: Allows users to link their bank accounts and other wallets for better financial tracking.
 - **Financial Planning**: Users can create their own financial plans to manage savings and expenditures.
-- **Charts and Analytics**: 
+- **Charts and Analytics**:
   - Monthly income and outcome summaries.
   - Pie charts showing percentage breakdowns of income and expenses by categories such as grocery, business, salary, etc.
-- **Transaction Management**: 
+- **Transaction Management**:
   - Track daily, weekly, and monthly transactions.
   - Classify transactions into categories (e.g., income, outcome, business, personal, etc.).
 - **Security**: Includes PIN verification for sensitive financial actions.
@@ -95,36 +97,45 @@ users (collection)
 ## App Screens
 
 ### 1. **Home Screen**
-   - Displays the user's wallet balance.
-   - Option to view financial transactions and plans.
-   - Allows users to add new accounts or top-up their wallet.
-     
+
+- Displays the user's wallet balance.
+- Option to view financial transactions and plans.
+- Allows users to transfer funds or top-up their wallet.
+  ![home_screen]('assets/documentation/home1.png') ![home_screen]('assets/documentation/home2.jpeg')
+
 ### 2. **Portfolio Screen**
-   - Displays the user's wallet balance.
-   - Option to view financial transactions and plans.
-   - Allows users to add new accounts or top-up their wallet.
-     
+
+- Displays the user's financial growth chart.
+- Pie charts showing the breakdown of income and expenses.
+  ![portfolio_screen]('assets/documentation/portfolio1.png') ![portfolio_screen]('assets/documentation/portfolio2.png')
+
 ### 3. **Profile Screen**
-   - Displays the user's wallet balance.
-   - Option to view financial transactions and plans.
-   - Allows users to add new accounts or top-up their wallet.
+
+- Displays the user's profile.
+- Option to update the profile and manage connected accounts.
+- Includes settings for app customization.
+  ![profile_screen]('assets/documentation/profile1.jpeg') ![profile_screen]('assets/documentation/profile2.jpeg') ![profile_screen]('assets/documentation/addaccountconnection.jpeg')
 
 ### 4. **Transactions Screen**
-   - Displays a list of recent transactions.
-   - Users can filter and categorize their transactions.
-   - Option to see detailed transaction breakdowns.
+
+- Displays a list of recent transactions.
+- Users can filter and categorize their transactions.
+- Option to see detailed transaction breakdowns.
+  ![transaction_screen]('assets/documentation/transactions.jpeg') ![transaction_screen]('assets/documentation/transactiondetail.jpeg')
 
 ### 5. **Financial Plans**
-   - Users can create and view their financial plans.
-   - Includes saving goals and budgeting features.
 
+- Users can create and view their financial plans.
+- Includes saving goals and budgeting features.
+  ![finplan_screen]('assets/documentation/finplanlist.jpeg') ![finplan_screen]('assets/documentation/addfinplan.jpeg')
 
-## How to Use
+### 6. **Transfer and Top-up**
 
-1. **Add a New Account**: You can link your bank or digital wallet account through the settings page.
-2. **Create a Financial Plan**: Go to the financial plans screen and create a new plan for savings or expenditure management.
-3. **Track Transactions**: View your transaction history under the transactions section. You can filter them by categories like business, grocery, or salary.
-4. **View Analytics**: Access charts and graphs to see a breakdown of your income and spending by category.
+- Users can transfer funds to other users within Tofu Wallet.
+- Wallet balance can be topped up using connected accounts.
+- Includes pin verification for secure transactions.
+  ![transfer_screen]('assets/documentation/transfer.jpeg') ![transfer_screen]('assets/documentation/transfercheckout.jpeg') ![topup_screen]('assets/documentation/topup.jpeg')
+  ![pin_verification_screen]('assets/documentation/pin.jpeg') ![pin_verification_screen]('assets/documentation/insertpin.jpeg') ![pin_verification_screen]('assets/documentation/pinerror.jpeg')
 
 ## Contributing
 
@@ -145,6 +156,6 @@ If you encounter any issues, feel free to open an issue on the GitHub repository
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Additional Notes
 
-Feel free to adjust the details to fit your actual app setup! This documentation is meant to provide a clear structure for users and contributors to easily understand the app’s functionality and how they can get involved.
+This project is intended for portfolio purposes only. Please do not input real bank or wallet account details, as this may cause unintended issues.

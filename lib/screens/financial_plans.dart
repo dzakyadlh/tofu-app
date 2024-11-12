@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tofu/providers/connected_accounts_provider.dart';
 import 'package:tofu/providers/financial_plan_provider.dart';
+import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/financial_plan_card.dart';
@@ -80,17 +82,26 @@ class FinancialPlansScreen extends StatelessWidget {
       );
     }
 
-    Widget financialPlansList(List<Map<String, dynamic>> financialPlans) {
+    Widget financialPlansList(
+        List<Map<String, dynamic>> financialPlans, int totalBalance) {
       return ListView.builder(
         itemCount: financialPlans.length,
         itemBuilder: (context, index) {
+          int monthlyTarget =
+              ((financialPlans[index]['target'] - totalBalance) /
+                      financialPlans[index]['monthsRemaining'])
+                  .round();
+          if (monthlyTarget < 0) {
+            monthlyTarget = 0;
+          }
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             child: FinancialPlanCard(
               title: financialPlans[index]['title'],
               target: financialPlans[index]['target'],
               timeRemaining: financialPlans[index]['timeRemaining'],
-              monthlyTarget: financialPlans[index]['monthlyTarget'],
+              monthlyTarget: monthlyTarget,
+              isCompleted: monthlyTarget == 0 ? true : false,
               onPressed: () {
                 Navigator.pushNamed(
                   context,
@@ -110,16 +121,27 @@ class FinancialPlansScreen extends StatelessWidget {
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
           child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Consumer<FinancialPlanProvider>(
-                  builder: (context, provider, child) {
-                if (provider.isLoading) {
-                  return const LoadingScreen();
-                }
-                return provider.financialPlans.isNotEmpty
-                    ? financialPlansList(provider.financialPlans)
-                    : emptyList();
-              }))),
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+        child: Consumer3<FinancialPlanProvider, UserProvider,
+            ConnectedAccountsProvider>(
+          builder: (context, financialPlanProvider, userProvider,
+              connectedAccountsProvider, child) {
+            if (financialPlanProvider.isLoading ||
+                userProvider.isLoading ||
+                connectedAccountsProvider.isLoading) {
+              return const LoadingScreen();
+            }
+
+            int totalBalance = userProvider.user['wallet']['balance'] +
+                connectedAccountsProvider.totalBalance;
+
+            return financialPlanProvider.financialPlans.isNotEmpty
+                ? financialPlansList(
+                    financialPlanProvider.financialPlans, totalBalance)
+                : emptyList();
+          },
+        ),
+      )),
     );
   }
 }

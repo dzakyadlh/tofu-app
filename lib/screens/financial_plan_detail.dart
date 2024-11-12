@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/connected_accounts_provider.dart';
+import 'package:tofu/providers/financial_plan_provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/utils/number_format.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/loading_screen.dart';
 
 class FinancialPlanDetailScreen extends StatefulWidget {
@@ -18,10 +20,34 @@ class FinancialPlanDetailScreen extends StatefulWidget {
 class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
   bool isLoading = false;
 
+  Future<void> completePlan(Map<String, dynamic> financialPlan) async {
+    FinancialPlanProvider financialPlanProvider =
+        Provider.of(context, listen: false);
+
+    try {
+      await financialPlanProvider.removeFinancialPlan(financialPlan['id']);
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Failed to complete financial plan: ${e.toString()}')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final financialPlan =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+
+    handleCompletePlan() {
+      completePlan(financialPlan);
+    }
 
     PreferredSizeWidget topBar() {
       return PreferredSize(
@@ -39,7 +65,7 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                   color: subtitleTextColor,
                 )),
             title: Text(
-              'Financial Freedom',
+              '${financialPlan['title']}',
               style: secondaryTextStyle.copyWith(
                 fontWeight: bold,
                 fontSize: 16,
@@ -187,7 +213,59 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
       );
     }
 
-    Widget planSchedule() {
+    Widget planSchedule(int totalBalance) {
+      int planCondition = 0;
+      int initialTimeSpan = (((financialPlan['deadline']).year -
+                  (financialPlan['createdAt']).year) *
+              12) +
+          ((financialPlan['deadline']).month -
+              (financialPlan['createdAt']).month);
+      int initialMonthlyTarget =
+          (financialPlan['target'] / initialTimeSpan).round();
+      int currentMonthlyTarget = ((financialPlan['target'] - totalBalance) /
+              financialPlan['monthsRemaining'])
+          .round();
+      double difference = ((currentMonthlyTarget - initialMonthlyTarget) /
+          initialMonthlyTarget);
+
+      if (difference < 0.25) {
+        planCondition = 1; // On track
+      } else if (difference < 0.5) {
+        planCondition = 2; // behind schedule
+      } else if (difference < 1) {
+        planCondition = 3; // off-track
+      } else {
+        planCondition = 0; // Can be completed
+      }
+
+      // Define the progress conclusion message and icon based on planCondition
+      String conclusionText;
+      IconData conclusionIcon;
+      Color iconColor;
+
+      switch (planCondition) {
+        case 1:
+          conclusionText = 'On Track';
+          conclusionIcon = Icons.thumb_up;
+          iconColor = tertiaryColor;
+          break;
+        case 2:
+          conclusionText = 'Behind Schedule';
+          conclusionIcon = Icons.warning;
+          iconColor = Colors.orange;
+          break;
+        case 3:
+          conclusionText = 'Off-track';
+          conclusionIcon = Icons.thumb_down;
+          iconColor = alertColor;
+          break;
+        default:
+          conclusionText = 'Can be Completed!';
+          conclusionIcon = Icons.check_circle;
+          iconColor = primaryColor;
+          break;
+      }
+
       return Container(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -264,15 +342,13 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                 Row(
                   children: [
                     Icon(
-                      Icons.whatshot,
-                      color: primaryColor,
+                      conclusionIcon,
+                      color: iconColor,
                       size: 24,
                     ),
-                    const SizedBox(
-                      width: 8,
-                    ),
+                    const SizedBox(width: 8),
                     Text(
-                      'On Track',
+                      conclusionText,
                       style: primaryTextStyle.copyWith(
                         fontSize: 20,
                         fontWeight: bold,
@@ -289,10 +365,10 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
     }
 
     Widget recommendations(int totalBalance) {
-      print(financialPlan['monthsRemaining']);
       int monthlyTarget = ((financialPlan['target'] - totalBalance) /
               financialPlan['monthsRemaining'])
           .round();
+      monthlyTarget < 0 ? monthlyTarget = 0 : monthlyTarget;
 
       return Container(
         padding: const EdgeInsets.all(16),
@@ -326,6 +402,16 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
                 ),
               ],
             ),
+            monthlyTarget == 0
+                ? Padding(
+                    padding: EdgeInsets.only(top: 32),
+                    child: CustomFilledButton(
+                        buttonText: 'Complete Plan',
+                        onPressed: () {
+                          handleCompletePlan();
+                        }),
+                  )
+                : SizedBox()
           ],
         ),
       );
@@ -335,27 +421,27 @@ class _FinancialPlanDetailScreenState extends State<FinancialPlanDetailScreen> {
       appBar: topBar(),
       resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
-      body: SafeArea(child:
-          Consumer<UserProvider>(builder: (context, userProvider, child) {
-        return Consumer<ConnectedAccountsProvider>(
-            builder: (context, connectedAccountsProvider, child) {
-          if (userProvider.isLoading || connectedAccountsProvider.isLoading) {
-            return LoadingScreen();
-          }
-
-          int totalBalance = userProvider.user['wallet']['balance'] +
-              connectedAccountsProvider.totalBalance;
-
-          return Column(
-            children: [
-              progressBar(totalBalance),
-              planTarget(totalBalance),
-              planSchedule(),
-              recommendations(totalBalance),
-            ],
-          );
-        });
-      })),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Consumer2<UserProvider, ConnectedAccountsProvider>(
+            builder: (context, userProvider, connectedAccountsProvider, child) {
+              int totalBalance = userProvider.user['wallet']['balance'] +
+                  connectedAccountsProvider.totalBalance;
+              return userProvider.isLoading ||
+                      connectedAccountsProvider.isLoading
+                  ? LoadingScreen()
+                  : Column(
+                      children: [
+                        progressBar(totalBalance),
+                        planTarget(totalBalance),
+                        planSchedule(totalBalance),
+                        recommendations(totalBalance),
+                      ],
+                    );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

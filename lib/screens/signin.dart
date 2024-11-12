@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/auth_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
+import 'package:tofu/widgets/custom_outlined_button.dart';
 
 class SigninScreen extends StatefulWidget {
   const SigninScreen({super.key});
@@ -110,58 +112,22 @@ class _SigninScreenState extends State<SigninScreen> {
             ),
             Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            signin();
-                          }
-                        },
-                        style: FilledButton.styleFrom(
-                            backgroundColor: tertiaryColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(defaultRadius)),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16)),
-                        child: Text(
-                          'Sign In',
-                          style:
-                              secondaryTextStyle.copyWith(fontWeight: semibold),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                CustomFilledButton(
+                    buttonText: 'Sign In',
+                    isLoading: isLoading,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        signin();
+                      }
+                    }),
                 const SizedBox(
                   height: 8,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/signup');
-                        },
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(defaultRadius)),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          side: BorderSide(width: 1.0, color: tertiaryColor),
-                        ),
-                        child: Text(
-                          'Create an account',
-                          style:
-                              secondaryTextStyle.copyWith(fontWeight: semibold),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+                CustomOutlinedButton(
+                    buttonText: 'Create an account',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/signup');
+                    })
               ],
             ),
           ],

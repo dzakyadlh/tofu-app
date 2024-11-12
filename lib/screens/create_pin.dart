@@ -33,16 +33,16 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of(context);
-
-    handleCreatePin() async {
-      try {
-        await userProvider.createWallet(pinController.text);
+  Future<void> handleCreatePin() async {
+    UserProvider userProvider = Provider.of(context, listen: false);
+    try {
+      await userProvider.createWallet(pinController.text);
+      if (mounted) {
         Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
-      } catch (e) {
-        // Handle any errors (e.g., connection issues)
+      }
+    } catch (e) {
+      // Handle any errors (e.g., connection issues)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error verifying PIN: ${e.toString()}'),
@@ -51,7 +51,10 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         );
       }
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final focusedBorderColor = tertiaryColor;
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
@@ -185,16 +188,14 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
       resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              header(),
-              pinInputField(),
-            ],
-          ),
+          child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            header(),
+            pinInputField(),
+          ],
         ),
       )),
     );

@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tofu/providers/user_provider.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
 class CompleteProfileScreen extends StatefulWidget {
@@ -22,11 +20,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final phoneNumberController = TextEditingController(text: '');
   final _formKey = GlobalKey<FormState>();
 
-  File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
-
   bool isLoading = false;
-  bool isPermitted = false;
 
   @override
   void dispose() {
@@ -34,35 +28,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     occupationController.dispose();
     phoneNumberController.dispose();
     super.dispose();
-  }
-
-  Future<void> _requestPermissions() async {
-    final cameraPermission = await Permission.camera.request();
-    final photoPermission = await Permission.photos.request();
-
-    if (cameraPermission.isGranted && photoPermission.isGranted) {
-      _pickImage();
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Permission denied. Unable to pick image.')),
-        );
-      }
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _imageFile = File(image.path);
-      });
-
-      if (mounted) {
-        final userProvider = Provider.of<UserProvider>(context, listen: false);
-        await userProvider.uploadProfilePicture(_imageFile!);
-      }
-    }
   }
 
   Future<void> completeProfile() async {
@@ -119,50 +84,26 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
       completeProfile();
     }
 
+    PreferredSizeWidget topBar() {
+      return PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+            backgroundColor: backgroundPrimaryColor,
+            elevation: 0,
+            title: Text(
+              'Complete Profile',
+              style: secondaryTextStyle.copyWith(
+                fontWeight: bold,
+                fontSize: 16,
+              ),
+            )),
+      );
+    }
+
     Widget header() {
       return Text(
         'Help us to know more about you!',
         style: secondaryTextStyle.copyWith(fontWeight: semibold, fontSize: 20),
-      );
-    }
-
-    Widget profilePictureField() {
-      return Column(
-        children: [
-          GestureDetector(
-            onTap: _requestPermissions, // Open the gallery when tapped
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                  color: secondaryColor,
-                  borderRadius: BorderRadius.circular(50)),
-              alignment: Alignment.center,
-              child: _imageFile == null
-                  ? const Icon(
-                      Icons.person_add_alt_1,
-                      size: 80,
-                    )
-                  : ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.file(
-                        _imageFile!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-            ),
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          Text(
-            'Upload a profile picture to help us identify you',
-            style:
-                secondaryTextStyle.copyWith(fontWeight: regular, fontSize: 12),
-          ),
-        ],
       );
     }
 
@@ -249,34 +190,20 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     Widget buttons() {
       return Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      handleCompleteProfile();
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                      backgroundColor: tertiaryColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(defaultRadius)),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16)),
-                  child: Text(
-                    'Done',
-                    style: secondaryTextStyle.copyWith(fontWeight: semibold),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          CustomFilledButton(
+              buttonText: 'Done',
+              isLoading: isLoading,
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  handleCompleteProfile();
+                }
+              })
         ],
       );
     }
 
     return Scaffold(
+      appBar: topBar(),
       backgroundColor: backgroundPrimaryColor,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
@@ -288,10 +215,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             header(),
             const SizedBox(
               height: 32,
-            ),
-            profilePictureField(),
-            const SizedBox(
-              height: 16,
             ),
             inputFields(),
             const SizedBox(

@@ -185,7 +185,7 @@ class _IncomePieChartState extends State<IncomePieChart> {
                 const SizedBox(width: 8),
                 Text(
                   category,
-                  style: secondaryTextStyle.copyWith(fontSize: 12),
+                  style: secondaryTextStyle.copyWith(fontSize: 10),
                 ),
               ],
             ),

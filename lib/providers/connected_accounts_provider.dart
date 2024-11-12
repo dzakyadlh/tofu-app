@@ -45,7 +45,7 @@ class ConnectedAccountsProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      print("Error fetching connected accounts: ${e.toString()}");
+      debugPrint("Error fetching connected accounts: ${e.toString()}");
       rethrow;
     }
   }
@@ -63,7 +63,7 @@ class ConnectedAccountsProvider with ChangeNotifier {
       fetchConnectedAccounts();
       notifyListeners();
     } catch (e) {
-      print("Error adding connected account: ${e.toString()}");
+      debugPrint("Error adding connected account: ${e.toString()}");
       rethrow;
     }
   }
@@ -94,7 +94,7 @@ class ConnectedAccountsProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print("Error updating connected account balance: ${e.toString()}");
+      debugPrint("Error updating connected account balance: ${e.toString()}");
       rethrow;
     }
   }
@@ -107,7 +107,7 @@ class ConnectedAccountsProvider with ChangeNotifier {
       }
       return totalBalance;
     } catch (e) {
-      print(
+      debugPrint(
           "Error calculating connected accounts total balance: ${e.toString()}");
       rethrow;
     }

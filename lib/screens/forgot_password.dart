@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tofu/theme.dart';
+import 'package:tofu/widgets/custom_filled_button.dart';
 import 'package:tofu/widgets/custom_input_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -86,67 +87,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             const SizedBox(
               height: 16,
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/signin',
-                          (_) => false,
-                        );
-                      }
-                    },
-                    style: FilledButton.styleFrom(
-                        backgroundColor: tertiaryColor,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(defaultRadius)),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16)),
-                    child: Text(
-                      'Send me an email',
-                      style: secondaryTextStyle.copyWith(fontWeight: semibold),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            CustomFilledButton(
+                buttonText: 'Send me an email',
+                onPressed: () {
+                  Navigator.pop(context);
+                })
           ],
         ),
-      );
-    }
-
-    Widget buttons() {
-      return Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      '/signin',
-                      (_) => false,
-                    );
-                  },
-                  style: FilledButton.styleFrom(
-                      backgroundColor: tertiaryColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(defaultRadius)),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16)),
-                  child: Text(
-                    'Send me an email',
-                    style: secondaryTextStyle.copyWith(fontWeight: semibold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       );
     }
 

@@ -32,9 +32,11 @@ class FinancialPlanProvider with ChangeNotifier {
           .listen((snapshot) {
         _financialPlans = snapshot.docs.map((doc) {
           // Fetch the required fields from Firestore
+          String id = doc.id;
           String title = doc['title'];
           int target = doc['target'];
           DateTime deadline = (doc['deadline'] as Timestamp).toDate();
+          DateTime createdAt = (doc['created_at'] as Timestamp).toDate();
 
           DateTime now = DateTime.now();
 
@@ -43,25 +45,22 @@ class FinancialPlanProvider with ChangeNotifier {
           int monthsRemaining = timeRemaining.inDays ~/ 30 % 12;
           int daysRemaining = timeRemaining.inDays % 30;
 
-          int monthlyTarget = (timeRemaining.inDays ~/ 30) != 0
-              ? target ~/ (timeRemaining.inDays ~/ 30)
-              : target;
-
           return {
+            'id': id,
             'title': title,
             'target': target,
             'deadline': deadline,
             'timeRemaining':
                 '$yearsRemaining years $monthsRemaining months $daysRemaining days',
-            'monthlyTarget': monthlyTarget.isNaN ? 0 : monthlyTarget,
             'monthsRemaining': timeRemaining.inDays ~/ 30,
+            'createdAt': createdAt
           };
         }).toList();
         _isLoading = false;
         notifyListeners();
       });
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -86,7 +85,7 @@ class FinancialPlanProvider with ChangeNotifier {
       });
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       rethrow;
     }
   }

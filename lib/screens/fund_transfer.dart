@@ -21,6 +21,7 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
 
   Map<String, dynamic>? user;
   List<String> accountHistory = [];
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -31,25 +32,36 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
   Future<void> searchUser(String phoneNumber) async {
     UserProvider userProvider = Provider.of(context, listen: false);
     try {
+      isLoading = true;
       user = await userProvider.fetchUserDataByPhoneNumber(phoneNumber);
       if (user != null) {
-        Navigator.pushNamed(context, '/transfer-checkout',
-            arguments: {'user': user});
+        if (mounted) {
+          Navigator.pushNamed(context, '/transfer-checkout',
+              arguments: {'user': user});
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'User not found',
-              style: alertTextStyle,
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'User not found',
+                style: alertTextStyle,
+              ),
+              duration: Duration(seconds: 5),
             ),
-            duration: Duration(seconds: 5),
-          ),
-        );
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to search for user: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to search for user: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        isLoading = false;
+      }
     }
   }
 
@@ -207,6 +219,7 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
               ),
               CustomOutlinedButton(
                   buttonText: 'Transfer to this user',
+                  isLoading: isLoading,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       searchUser(targetAccountController.text);
@@ -223,9 +236,19 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
         child: Consumer<TransactionProvider>(
           builder: (context, provider, child) {
             if (provider.transactions.isEmpty) {
-              return Center(
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Image.asset(
+                      'assets/images/despair.png',
+                      width: 150,
+                      fit: BoxFit.fitWidth,
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
                     Text(
                       'You haven\'t done any transactions',
                       style: secondaryTextStyle.copyWith(
@@ -234,11 +257,12 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: 4,
+                      height: 8,
                     ),
                     Text(
                       'Tofu wallet can be used to transfer to other accounts and do payments',
                       style: subtitleTextStyle.copyWith(fontSize: 12),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -289,7 +313,7 @@ class _FundTransferScreenState extends State<FundTransferScreen> {
 
     return Scaffold(
       appBar: topBar(),
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
         child: Column(

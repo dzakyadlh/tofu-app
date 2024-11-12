@@ -71,13 +71,21 @@ class TransactionSuccessScreen extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          Text(
-            '\$${formatWithComma(transaction['amount'])}',
-            style: primaryTextStyle.copyWith(
-              fontWeight: bold,
-              fontSize: 16,
-            ),
-          ),
+          transaction['isOutcome']
+              ? Text(
+                  '-\$${formatWithComma(transaction['amount'])}',
+                  style: alertTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: semibold,
+                  ),
+                )
+              : Text(
+                  '+\$${formatWithComma(transaction['amount'])}',
+                  style: primaryTextStyle.copyWith(
+                    fontSize: 16,
+                    fontWeight: semibold,
+                  ),
+                ),
           const SizedBox(
             height: 8,
           ),
@@ -236,17 +244,25 @@ class TransactionSuccessScreen extends StatelessWidget {
               Text(
                 'Total Amount',
                 style: secondaryTextStyle.copyWith(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: semibold,
                 ),
               ),
-              Text(
-                '\$${formatWithComma(transaction['amount'])}',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 14,
-                  fontWeight: semibold,
-                ),
-              ),
+              transaction['isOutcome']
+                  ? Text(
+                      '-\$${formatWithComma(transaction['amount'])}',
+                      style: alertTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semibold,
+                      ),
+                    )
+                  : Text(
+                      '+\$${formatWithComma(transaction['amount'])}',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semibold,
+                      ),
+                    ),
             ],
           ),
         ],

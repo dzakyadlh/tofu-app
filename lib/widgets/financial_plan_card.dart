@@ -3,7 +3,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import 'package:tofu/theme.dart';
 import 'package:tofu/utils/number_format.dart';
 
-class FinancialPlanCard extends StatefulWidget {
+class FinancialPlanCard extends StatelessWidget {
   const FinancialPlanCard({
     super.key,
     required this.title,
@@ -11,6 +11,7 @@ class FinancialPlanCard extends StatefulWidget {
     required this.timeRemaining,
     required this.monthlyTarget,
     required this.onPressed,
+    this.isCompleted = false,
   });
 
   final String title;
@@ -18,88 +19,79 @@ class FinancialPlanCard extends StatefulWidget {
   final String timeRemaining;
   final int monthlyTarget;
   final void Function()? onPressed;
-
-  @override
-  State<FinancialPlanCard> createState() => _FinancialPlanCardState();
-}
-
-class _FinancialPlanCardState extends State<FinancialPlanCard> {
-  bool isActive = false;
-  bool isHover = false;
+  final bool isCompleted;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      child: InkWell(
-        onTap: widget.onPressed,
-        splashColor: primaryColor,
-        child: Container(
-          width: 300,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-              border:
-                  Border.all(color: isHover ? primaryColor : Colors.white12)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.title,
-                style: secondaryTextStyle.copyWith(
-                  fontSize: 14,
-                  fontWeight: semibold,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: 300,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            border:
+                Border.all(color: isCompleted ? primaryColor : Colors.white12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: isCompleted
+                  ? primaryTextStyle
+                  : secondaryTextStyle.copyWith(
+                      fontSize: 14,
+                      fontWeight: semibold,
+                    ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Target:',
+                  style: subtitleTextStyle.copyWith(fontSize: 12),
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Target:',
-                    style: subtitleTextStyle.copyWith(fontSize: 12),
-                  ),
-                  Text(
-                    '\$${formatWithComma(widget.target)}',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Time Remaining:',
-                    style: subtitleTextStyle.copyWith(fontSize: 12),
-                  ),
-                  Text(
-                    widget.timeRemaining,
-                    style: primaryTextStyle.copyWith(fontSize: 12),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Monthly Target:',
-                    style: subtitleTextStyle.copyWith(fontSize: 12),
-                  ),
-                  Text(
-                    '\$${formatWithComma(widget.monthlyTarget)}',
-                    style: primaryTextStyle.copyWith(fontSize: 12),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                Text(
+                  '\$${formatWithComma(target)}',
+                  style: primaryTextStyle.copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Time Remaining:',
+                  style: subtitleTextStyle.copyWith(fontSize: 12),
+                ),
+                Text(
+                  timeRemaining,
+                  style: primaryTextStyle.copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Monthly Target:',
+                  style: subtitleTextStyle.copyWith(fontSize: 12),
+                ),
+                Text(
+                  '\$${formatWithComma(monthlyTarget)}',
+                  style: primaryTextStyle.copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -34,6 +34,7 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
   }
 
   bool isError = false;
+  bool isLoading = false;
 
   Future<void> transaction(Map<String, dynamic> args) async {
     UserProvider userProvider = Provider.of(context, listen: false);
@@ -139,12 +140,14 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
       }
     } catch (e) {
       // Handle any errors (e.g., connection issues)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error verifying PIN: ${e.toString()}'),
-          backgroundColor: errorColor,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error verifying PIN: ${e.toString()}'),
+            backgroundColor: errorColor,
+          ),
+        );
+      }
     }
   }
 
@@ -282,22 +285,20 @@ class _PinVerificationScreenState extends State<PinVerificationScreen> {
       resizeToAvoidBottomInset: true,
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                header(),
-                pinInputField(),
-                isError
-                    ? Text(
-                        'Incorrect PIN number. Please try again',
-                        style: errorTextStyle.copyWith(fontSize: 12),
-                      )
-                    : SizedBox()
-              ],
-            ),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              header(),
+              pinInputField(),
+              isError
+                  ? Text(
+                      'Incorrect PIN number. Please try again',
+                      style: errorTextStyle.copyWith(fontSize: 12),
+                    )
+                  : SizedBox()
+            ],
           ),
         ),
       ),

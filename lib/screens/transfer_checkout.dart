@@ -23,6 +23,7 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
 
   String? selectedValue;
   bool isError = false;
+  bool isLoading = false;
 
   List<String> category = [
     'Payment',
@@ -45,44 +46,57 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
 
   Future<void> transfer(String receiverAccountNumber) async {
     UserProvider userProvider = Provider.of(context, listen: false);
-    Map<String, dynamic>? receiverUser =
-        await userProvider.fetchUserDataByPhoneNumber(receiverAccountNumber);
-    if (receiverUser != null) {
-      Map<String, dynamic> senderTransactionData = {
-        'title': 'Transfer to ${receiverUser['name']}',
-        'amount': amountController.integerValue!,
-        'category': selectedValue!,
-        'status': 'Completed',
-        'method': {
-          'type': 'Tofu Wallet',
-          'accountNumber': userProvider.user['phoneNumber']
-        },
-        'receiver': {'accountNumber': receiverAccountNumber},
-        'isOutcome': true,
-      };
-      Map<String, dynamic> receiverTransactionData = {
-        'id': receiverUser['id'],
-        'title': 'Transfer from ${userProvider.user['name']}',
-        'amount': amountController.integerValue!,
-        'category': selectedValue!,
-        'status': 'Completed',
-        'method': {
-          'type': 'Tofu Wallet',
-          'accountNumber': userProvider.user['phoneNumber']
-        },
-        'sender': {'accountNumber': userProvider.user['phoneNumber']},
-      };
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/pin-verification',
-          (_) => false,
-          arguments: {
-            'transactionType': 'transfer',
-            'sender': senderTransactionData,
-            'receiver': receiverTransactionData,
+    try {
+      isLoading = true;
+      Map<String, dynamic>? receiverUser =
+          await userProvider.fetchUserDataByPhoneNumber(receiverAccountNumber);
+      if (receiverUser != null) {
+        Map<String, dynamic> senderTransactionData = {
+          'title': 'Transfer to ${receiverUser['name']}',
+          'amount': amountController.integerValue!,
+          'category': selectedValue!,
+          'status': 'Completed',
+          'method': {
+            'type': 'Tofu Wallet',
+            'accountNumber': userProvider.user['phoneNumber']
           },
+          'receiver': {'accountNumber': receiverAccountNumber},
+          'isOutcome': true,
+        };
+        Map<String, dynamic> receiverTransactionData = {
+          'id': receiverUser['id'],
+          'title': 'Transfer from ${userProvider.user['name']}',
+          'amount': amountController.integerValue!,
+          'category': selectedValue!,
+          'status': 'Completed',
+          'method': {
+            'type': 'Tofu Wallet',
+            'accountNumber': userProvider.user['phoneNumber']
+          },
+          'sender': {'accountNumber': userProvider.user['phoneNumber']},
+        };
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/pin-verification',
+            (_) => false,
+            arguments: {
+              'transactionType': 'transfer',
+              'sender': senderTransactionData,
+              'receiver': receiverTransactionData,
+            },
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to transfer: ${e.toString()}')),
         );
+      }
+    } finally {
+      if (mounted) {
+        isLoading = false;
       }
     }
   }
@@ -281,6 +295,7 @@ class _TransferCheckoutScreenState extends State<TransferCheckoutScreen> {
             const SizedBox(height: 32),
             CustomFilledButton(
                 buttonText: 'Transfer',
+                isLoading: isLoading,
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     transfer(receiver?['phoneNumber']);

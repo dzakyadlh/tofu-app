@@ -96,14 +96,14 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              'Last month yield',
+                              'Last year growth',
                               style: subtitleTextStyle.copyWith(fontSize: 12),
                             ),
                             const SizedBox(
                               height: 4,
                             ),
                             Text(
-                              '+5.58%',
+                              '+40.24%',
                               style: primaryTextStyle.copyWith(fontSize: 12),
                             )
                           ],

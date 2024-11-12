@@ -84,43 +84,42 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }
 
     Widget emptyList() {
-      return Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'You haven\'t done any transaction',
-              style: secondaryTextStyle.copyWith(
-                fontWeight: semibold,
-                fontSize: 16,
-              ),
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'You haven\'t done any transaction',
+            style: secondaryTextStyle.copyWith(
+              fontWeight: semibold,
+              fontSize: 16,
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              'Invest most of your money and transfer your money when you need to',
-              style: subtitleTextStyle.copyWith(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            CustomFilledButton(
-                buttonText: 'Transfer Fund',
-                onPressed: () {
-                  Navigator.pushNamed(context, '/add-financial-plan');
-                }),
-            const SizedBox(
-              height: 8,
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            'Invest most of your money and transfer your money when you need to',
+            style: subtitleTextStyle.copyWith(fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          CustomFilledButton(
+              buttonText: 'Transfer Fund',
+              onPressed: () {
+                Navigator.pushNamed(context, '/add-financial-plan');
+              }),
+          const SizedBox(
+            height: 8,
+          ),
+        ],
       );
     }
 
     Widget transactionList(List<Map<String, dynamic>> transactions) {
       return ListView.builder(
+          shrinkWrap: true,
           itemCount: transactions.length,
           itemBuilder: (context, index) {
             return Container(
@@ -150,18 +149,21 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       backgroundColor: backgroundPrimaryColor,
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
         child: Column(
           children: [
             yearPicker(),
             const SizedBox(
               height: 16,
             ),
-            Consumer<TransactionProvider>(builder: (context, provider, child) {
-              return provider.transactions.isNotEmpty
-                  ? transactionList(provider.transactions)
-                  : emptyList();
-            })
+            Expanded(
+              child: Consumer<TransactionProvider>(
+                  builder: (context, provider, child) {
+                return provider.transactions.isNotEmpty
+                    ? transactionList(provider.transactions)
+                    : emptyList();
+              }),
+            )
           ],
         ),
       )),

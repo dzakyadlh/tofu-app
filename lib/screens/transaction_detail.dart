@@ -75,13 +75,21 @@ class TransactionDetailScreen extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          Text(
-            '\$${formatWithComma(transaction['amount'])}',
-            style: primaryTextStyle.copyWith(
-              fontWeight: bold,
-              fontSize: 16,
-            ),
-          ),
+          transaction['isOutcome']
+              ? Text(
+                  '-\$${formatWithComma(transaction['amount'])}',
+                  style: alertTextStyle.copyWith(
+                    fontWeight: bold,
+                    fontSize: 16,
+                  ),
+                )
+              : Text(
+                  '+\$${formatWithComma(transaction['amount'])}',
+                  style: primaryTextStyle.copyWith(
+                    fontWeight: bold,
+                    fontSize: 16,
+                  ),
+                ),
           const SizedBox(
             height: 8,
           ),
@@ -244,13 +252,21 @@ class TransactionDetailScreen extends StatelessWidget {
                   fontWeight: semibold,
                 ),
               ),
-              Text(
-                '\$${formatWithComma(transaction['amount'])}',
-                style: primaryTextStyle.copyWith(
-                  fontSize: 16,
-                  fontWeight: semibold,
-                ),
-              ),
+              transaction['isOutcome']
+                  ? Text(
+                      '-\$${formatWithComma(transaction['amount'])}',
+                      style: alertTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semibold,
+                      ),
+                    )
+                  : Text(
+                      '+\$${formatWithComma(transaction['amount'])}',
+                      style: primaryTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: semibold,
+                      ),
+                    ),
             ],
           ),
         ],
