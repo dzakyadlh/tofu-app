@@ -103,7 +103,7 @@ users (collection)
 - Allows users to transfer funds or top-up their wallet.
 
 | ![home_screen_1](assets/documentation/home1.png) | ![home_screen_2](assets/documentation/home2.jpeg) |
-|--------------------------------------------------|----------------------------------------------------|
+|----------------------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------------|
 
 ### 2. **Portfolio Screen**
 
@@ -111,7 +111,7 @@ users (collection)
 - Pie charts showing the breakdown of income and expenses.
 
 | ![portfolio_screen_1](assets/documentation/portfolio1.png) | ![portfolio_screen_2](assets/documentation/portfolio2.png) |
-|-------------------------------------------------------------|-----------------------------------------------------------|
+|----------------------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------------|
 
 ### 3. **Profile Screen**
 
@@ -129,7 +129,7 @@ users (collection)
 - Option to see detailed transaction breakdowns.
 
 | ![transaction_screen_1](assets/documentation/transactions.jpeg) | ![transaction_screen_2](assets/documentation/transactiondetail.jpeg) |
-|-----------------------------------------------------------------|--------------------------------------------------------------------|
+|----------------------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------------|
 
 ### 5. **Financial Plans**
 
@@ -137,7 +137,7 @@ users (collection)
 - Includes saving goals and budgeting features.
 
 | ![finplan_screen_1](assets/documentation/finplanlist.jpeg) | ![finplan_screen_2](assets/documentation/addfinplan.jpeg) |
-|------------------------------------------------------------|----------------------------------------------------------|
+|----------------------------------------------------------|---------------------------------------------------------|-------------------------------------------------------------------|
 
 ### 6. **Transfer and Top-up**
 
