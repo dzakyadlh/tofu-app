@@ -101,6 +101,7 @@ users (collection)
 - Displays the user's wallet balance.
 - Option to view financial transactions and plans.
 - Allows users to transfer funds or top-up their wallet.
+
 ||||
 |:----------------------------------------:|:-----------------------------------------:|
 | ![home_screen](assets/documentation/home1.png) | ![home_screen](assets/documentation/home2.jpeg) |
@@ -109,6 +110,7 @@ users (collection)
 
 - Displays the user's financial growth chart.
 - Pie charts showing the breakdown of income and expenses.
+
 ||||
 |:----------------------------------------:|:-----------------------------------------:|
 | ![portfolio_screen](assets/documentation/portfolio1.png) | ![portfolio_screen](assets/documentation/portfolio2.png) |
@@ -118,6 +120,7 @@ users (collection)
 - Displays the user's profile.
 - Option to update the profile and manage connected accounts.
 - Includes settings for app customization.
+
 ||||
 |:----------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
 | ![profile_screen](assets/documentation/profile1.jpeg) | ![profile_screen](assets/documentation/profile2.jpeg) | ![profile_screen](assets/documentation/addaccountconnection.jpeg) |
@@ -127,6 +130,7 @@ users (collection)
 - Displays a list of recent transactions.
 - Users can filter and categorize their transactions.
 - Option to see detailed transaction breakdowns.
+
 ||||
 |:----------------------------------------:|:-----------------------------------------:|
 | ![transaction_screen](assets/documentation/transactions.jpeg) | ![transaction_screen](assets/documentation/transactiondetail.jpeg) |
@@ -135,6 +139,7 @@ users (collection)
 
 - Users can create and view their financial plans.
 - Includes saving goals and budgeting features.
+
 ||||
 |:----------------------------------------:|:-----------------------------------------:|
 | ![finplan_screen](assets/documentation/finplanlist.jpeg) | ![finplan_screen](assets/documentation/addfinplan.jpeg) |
@@ -144,6 +149,7 @@ users (collection)
 - Users can transfer funds to other users within Tofu Wallet.
 - Wallet balance can be topped up using connected accounts.
 - Includes pin verification for secure transactions.
+
 ||||
 |:----------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
 | ![transfer_screen](assets/documentation/transfer.jpeg) | ![transfer_screen](assets/documentation/transfercheckout.jpeg) | ![topup_screen](assets/documentation/topup.jpeg) |
