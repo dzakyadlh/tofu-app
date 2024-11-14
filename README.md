@@ -138,26 +138,6 @@ users (collection)
 | ![transfer_screen_2](assets/documentation/transfercheckout.jpeg) | ![topup_screen](assets/documentation/topup.jpeg) | ![pin_verification_1](assets/documentation/pin.jpeg) |
 | ![pin_verification_2](assets/documentation/insertpin.jpeg) | ![pin_verification_3](assets/documentation/pinerror.jpeg) | |
 
-
-## Contributing
-
-We welcome contributions to Tofu! Here’s how you can help:
-
-1. Fork the repo.
-2. Create a new branch (`git checkout -b feature/new-feature`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add new feature'`).
-5. Push to the branch (`git push origin feature/new-feature`).
-6. Open a pull request.
-
-### Issues
-
-If you encounter any issues, feel free to open an issue on the GitHub repository. We will look into it and get back to you as soon as possible.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Additional Notes
 
 This project is intended for portfolio purposes only. Please do not input real bank or wallet account details, as this may cause unintended issues.
